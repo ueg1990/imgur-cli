@@ -19,8 +19,6 @@ with open('imgur_cli/__init__.py', 'r') as fd:
     url = re.search(r'^__url__\s*=\s*[\'"]([^\'"]*)[\'"]',
                     meta_data, re.MULTILINE).group(1)
 
-    print(name, author, email, license, url)
-
 requires = ['imgurpython >= 1.1.6', 'requests >= 2.7.0']
 classifiers = [
     # How mature is this project? Common values are
