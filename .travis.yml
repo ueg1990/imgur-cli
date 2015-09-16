@@ -1,0 +1,9 @@
+language: python
+python:
+  - "3.4"
+install:
+  - pip install -r requirements.txt
+before_script:
+  - pep8 --max-line-length=85 imgur_cli
+script:
+  - nosetests
