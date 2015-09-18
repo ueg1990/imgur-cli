@@ -9,7 +9,9 @@ from collections import namedtuple
 logger = logging.getLogger(__name__)
 
 def imgur_credentials():
-    ImgurCredentials = namedtuple('ImgurCredentials', ['client_id', 'client_secret', 'access_token', 'refresh_token', 'mashape_key'])
+    ImgurCredentials = namedtuple('ImgurCredentials',
+                                  ['client_id', 'client_secret', 'access_token',
+                                  'refresh_token', 'mashape_key'])
     try:
         from config import config
         client_id = config.get('IMGUR_CLIENT_ID')
@@ -24,5 +26,8 @@ def imgur_credentials():
         refresh_token = os.environ.get('IMGUR_REFRESH_TOKEN')
         mashape_key = os.environ.get('IMGUR_MASHAPE_KEY')
     if not client_id or not client_secret:
-        raise imgurpython.client.ImgurClientError('Client credentials not found. Ensure you have both client id and client secret')    
-    return ImgurCredentials(client_id, client_secret, access_token, refresh_token, mashape_key)
+        raise imgurpython.client.ImgurClientError('Client credentials not found. '
+                                                  'Ensure you have both client id '
+                                                  'and client secret')
+    return ImgurCredentials(client_id, client_secret, access_token,
+                            refresh_token, mashape_key)
