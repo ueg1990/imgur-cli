@@ -6,6 +6,11 @@ import imgurpython
 
 from collections import namedtuple
 
+try:
+    from imgur_cli.config import config
+except ImportError:
+    config = None
+
 logger = logging.getLogger(__name__)
 
 
@@ -13,14 +18,13 @@ def imgur_credentials():
     ImgurCredentials = namedtuple('ImgurCredentials',
                                   ['client_id', 'client_secret', 'access_token',
                                    'refresh_token', 'mashape_key'])
-    try:
-        from config import config
+    if config:
         client_id = config.get('IMGUR_CLIENT_ID')
         client_secret = config.get('IMGUR_CLIENT_SECRET')
         access_token = config.get('IMGUR_ACCESS_TOKEN')
         refresh_token = config.get('IMGUR_REFRESH_TOKEN')
         mashape_key = config.get('IMGUR_MASHAPE_KEY')
-    except ImportError:
+    else:
         client_id = os.environ.get('IMGUR_CLIENT_ID')
         client_secret = os.environ.get('IMGUR_CLIENT_SECRET')
         access_token = os.environ.get('IMGUR_ACCESS_TOKEN')
