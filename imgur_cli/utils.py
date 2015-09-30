@@ -6,9 +6,9 @@ def arg(*args, **kwargs):
         return func
     return _decorator
 
+
 def add_arg(func, *args, **kwargs):
     """Bind CLI arguments a 'cmd_' format function"""
-
     if not hasattr(func, 'arguments'):
         func.arguments = []
 

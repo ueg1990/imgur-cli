@@ -8,10 +8,11 @@ from collections import namedtuple
 
 logger = logging.getLogger(__name__)
 
+
 def imgur_credentials():
     ImgurCredentials = namedtuple('ImgurCredentials',
                                   ['client_id', 'client_secret', 'access_token',
-                                  'refresh_token', 'mashape_key'])
+                                   'refresh_token', 'mashape_key'])
     try:
         from config import config
         client_id = config.get('IMGUR_CLIENT_ID')
@@ -31,3 +32,8 @@ def imgur_credentials():
                                                   'and client secret')
     return ImgurCredentials(client_id, client_secret, access_token,
                             refresh_token, mashape_key)
+
+# Remove below in the end
+if __name__ == '__main__':
+    print(imgur_credentials())
+    print(tuple(imgur_credentials()))
