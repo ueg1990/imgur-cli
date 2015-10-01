@@ -87,9 +87,19 @@ class ImgurCli():
         """Prints arguments for bash-completion"""
         pass
 
+    @cli_arg('command', metavar='<subcommand', nargs='?',
+             help='Display help for <subcommand>')
     def do_help(self, args):
         """Display help about this program or one of its subcommands"""
-        pass
+        print('do_help', args.command)
+        if args.command:
+            if args.command in self.subcommands:
+                self.subcommands[args.command].print_help()
+            else:
+                raise CommandError('{0} is not valid subcommand'
+                                   .format(args.command))
+        else:
+            self.parser.print_help()
 
     def main(self, argv):
         pass
