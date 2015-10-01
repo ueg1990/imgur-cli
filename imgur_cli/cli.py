@@ -1,10 +1,17 @@
+"""
+Imgur CLI
+"""
+
 import argparse
 import logging
 import os
+import sys
 
 import imgurpython
 
 from collections import namedtuple
+
+from . import __version__
 
 try:
     from imgur_cli.config import config
@@ -37,7 +44,36 @@ def imgur_credentials():
     return ImgurCredentials(client_id, client_secret, access_token,
                             refresh_token, mashape_key)
 
+
+class ImgurCli():
+
+    @property
+    def base_parser(self):
+        parser = argparse.ArgumentParser(prog='imgur', description=__doc__.strip(),
+                                         epilog='See "imgur help COMMAND" for '
+                                         'help on a specific command')
+
+        # Global arguments
+        parser.add_argument('-v', '--version', action='version',
+                            version=__version__)
+
+        return parser
+
+    def main(self, argv):
+        parser = self.base_parser
+        options, args = parser.parse_known_args(argv)
+        print("help: ", options, args)
+
+
+def main():
+    try:
+        imgur_cli = ImgurCli()
+        imgur_cli.main(sys.argv[1:])
+    except Exception as e:
+        logger.debug(e, exc_info=1)
+        print(e, file=sys.stderr)
+        sys.exit(1)
+
 # Remove below in the end
 if __name__ == '__main__':
-    print(imgur_credentials())
-    print(tuple(imgur_credentials()))
+    main()
