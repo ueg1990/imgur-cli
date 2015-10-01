@@ -12,6 +12,7 @@ from collections import namedtuple
 import imgurpython
 
 from imgur_cli import __version__
+from imgur_cli import cli_api
 from imgur_cli.exceptions import CommandError
 from imgur_cli.utils import cli_arg
 
