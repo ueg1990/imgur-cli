@@ -89,11 +89,20 @@ class ImgurCli():
         pass
 
     def _add_base_completion_subparser(self, subparsers):
-        pass
+        subparser = subparsers.add_parser('bash_completion', add_help=False)
+        self.subcommands['bash_completion'] = subparser
+        subparser.set_defaults(func=self.do_bash_completion)
 
     def do_bash_completion(self):
         """Prints arguments for bash-completion"""
-        pass
+        commands = set()
+        options = set()
+        for key, value in self.subcommands.items():
+            commands.add(key)
+            options.update(option for option in
+                           value._optionals._option_string_actions.keys())
+        commands.remove('bash_completion')
+        print(' '.join(commands | options))
 
     @cli_arg('command', metavar='<subcommand', nargs='?',
              help='Display help for <subcommand>')
