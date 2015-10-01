@@ -86,14 +86,29 @@ class ImgurCli():
         return parser
 
     def _find_actions(self, subparsers, actions_module):
-        pass
+        for attr in (action for action in dir(actions_module)
+                     if action.startswith('cmd_')):
+            command = attr[4:].replace('_', '-')
+            callback = getattr(actions_module, attr)
+            description = callback.__doc__ or ''
+            action_help = description.strip()
+            arguments = getattr(callback, 'arguments', [])
+            subparser = subparsers.add_parser(command, help=action_help,
+                                              description=description,
+                                              add_help=False)
+            subparser.add_argument('-h', '--help', action='help',
+                                   help=argparse.SUPPRESS)
+            self.subcommands[command] = subparser
+            for args, kwargs in arguments:
+                subparser.add_argument(*args, **kwargs)
+                subparser.set_defaults(func=callback)
 
     def _add_base_completion_subparser(self, subparsers):
         subparser = subparsers.add_parser('bash_completion', add_help=False)
         self.subcommands['bash_completion'] = subparser
-        subparser.set_defaults(func=self.do_bash_completion)
+        subparser.set_defaults(func=self.cmd_bash_completion)
 
-    def do_bash_completion(self):
+    def cmd_bash_completion(self):
         """Prints arguments for bash-completion"""
         commands = set()
         options = set()
@@ -101,12 +116,13 @@ class ImgurCli():
             commands.add(key)
             options.update(option for option in
                            value._optionals._option_string_actions.keys())
+        commands.remove('bash-completion')
         commands.remove('bash_completion')
         print(' '.join(commands | options))
 
     @cli_arg('command', metavar='<subcommand', nargs='?',
              help='Display help for <subcommand>')
-    def do_help(self, args):
+    def cmd_help(self, args):
         """Display help about this program or one of its subcommands"""
         print('UEG -> do_help', args.command)
         if args.command:
@@ -125,12 +141,12 @@ class ImgurCli():
             self.parser.print_help()
             return 0
         args = self.parser.parse_args(argv)
-
+        print(args.func)
         # Short-circuit and deal with help right away
-        if args.func == self.do_help:
+        if args.func == self.cmd_help:
             self.do_help(args)
             return 0
-        if args.func == self.do_bash_completion:
+        if args.func == self.cmd_bash_completion:
             self.do_bash_completion()
             return 0
         self.client = imgurpython.ImgurClient(*credentials)
