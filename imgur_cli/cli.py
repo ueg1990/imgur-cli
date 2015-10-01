@@ -91,7 +91,6 @@ class ImgurCli():
              help='Display help for <subcommand>')
     def do_help(self, args):
         """Display help about this program or one of its subcommands"""
-        print('do_help', args.command)
         if args.command:
             if args.command in self.subcommands:
                 self.subcommands[args.command].print_help()
@@ -102,7 +101,22 @@ class ImgurCli():
             self.parser.print_help()
 
     def main(self, argv):
-        pass
+        credentials = imgur_credentials()
+        self.parser = self.subcommand_parser
+        if not argv:
+            self.parser.print_help()
+            return 0
+        args = self.parser.parse_args(argv)
+
+        # Short-circuit and deal with help right away
+        if args.func == self.do_help:
+            self.do_help(args)
+            return 0
+        if args.func == self.do_bash_completion:
+            self.do_bash_completion()
+            return 0
+        self.client = imgurpython.ImgurClient(*credentials)
+        args.func(self.client, args)
 
 
 def main():
