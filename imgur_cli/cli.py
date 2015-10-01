@@ -7,11 +7,13 @@ import logging
 import os
 import sys
 
-import imgurpython
-
 from collections import namedtuple
 
+import imgurpython
+
 from . import __version__
+from imgur_cli.exceptions import CommandError
+from imgur_cli.utils import cli_arg
 
 try:
     from imgur_cli.config import config
@@ -25,6 +27,7 @@ def imgur_credentials():
     ImgurCredentials = namedtuple('ImgurCredentials',
                                   ['client_id', 'client_secret', 'access_token',
                                    'refresh_token', 'mashape_key'])
+
     if config:
         client_id = config.get('IMGUR_CLIENT_ID')
         client_secret = config.get('IMGUR_CLIENT_SECRET')
@@ -37,10 +40,12 @@ def imgur_credentials():
         access_token = os.environ.get('IMGUR_ACCESS_TOKEN')
         refresh_token = os.environ.get('IMGUR_REFRESH_TOKEN')
         mashape_key = os.environ.get('IMGUR_MASHAPE_KEY')
+
     if not client_id or not client_secret:
         raise imgurpython.client.ImgurClientError('Client credentials not found. '
                                                   'Ensure you have both client id '
                                                   'and client secret')
+
     return ImgurCredentials(client_id, client_secret, access_token,
                             refresh_token, mashape_key)
 
@@ -68,10 +73,26 @@ class ImgurCli():
         # debug messages
         logging.basicConfig(level=logging.DEBUG, format=streamformat)
 
+    @property
+    def subcommand_parser(self):
+        pass
+
+    def _find_actions(self, subparsers, actions_module):
+        pass
+
+    def _add_base_completion_subparser(self, subparsers):
+        pass
+
+    def do_bash_completion(self):
+        """Prints arguments for bash-completion"""
+        pass
+
+    def do_help(self, args):
+        """Display help about this program or one of its subcommands"""
+        pass
+
     def main(self, argv):
-        parser = self.base_parser
-        options, args = parser.parse_known_args(argv)
-        print("help: ", options, args)
+        pass
 
 
 def main():

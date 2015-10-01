@@ -1,5 +1,5 @@
 
-def arg(*args, **kwargs):
+def cli_arg(*args, **kwargs):
     """Decorator for CLI args"""
     def _decorator(func):
         add_arg(func, *args, **kwargs)
