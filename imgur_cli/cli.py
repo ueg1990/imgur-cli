@@ -55,9 +55,18 @@ class ImgurCli():
 
         # Global arguments
         parser.add_argument('-v', '--version', action='version',
-                            version=__version__)
+                            version='%(prog)s {0}'.format(__version__))
+
+        parser.add_argument('--debug', default=False, action='store_true',
+                            help='Print debugging output')
 
         return parser
+
+    def setup_debugging(self):
+        streamformat = "%(levelname)s (%(module)s:%(lineno)d) %(message)s"
+        # Set up the root logger to debug so that the submodules can print
+        # debug messages
+        logging.basicConfig(level=logging.DEBUG, format=streamformat)
 
     def main(self, argv):
         parser = self.base_parser
@@ -74,6 +83,5 @@ def main():
         print(e, file=sys.stderr)
         sys.exit(1)
 
-# Remove below in the end
 if __name__ == '__main__':
     main()
