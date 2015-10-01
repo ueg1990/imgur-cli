@@ -11,7 +11,7 @@ from collections import namedtuple
 
 import imgurpython
 
-from . import __version__
+from imgur_cli import __version__
 from imgur_cli.exceptions import CommandError
 from imgur_cli.utils import cli_arg
 
@@ -75,7 +75,14 @@ class ImgurCli():
 
     @property
     def subcommand_parser(self):
-        pass
+        parser = self.base_parser
+        self.subcommands = {}
+        subparsers = parser.add_subparsers(metavar='<subcommand>')
+        actions_module = cli_api
+        self._find_actions(subparsers, actions_module)
+        self._find_actions(subparsers, self)
+        self._add_base_completion_subparser(subparsers)
+        return parser
 
     def _find_actions(self, subparsers, actions_module):
         pass
@@ -91,6 +98,7 @@ class ImgurCli():
              help='Display help for <subcommand>')
     def do_help(self, args):
         """Display help about this program or one of its subcommands"""
+        print('UEG -> do_help', args.command)
         if args.command:
             if args.command in self.subcommands:
                 self.subcommands[args.command].print_help()
