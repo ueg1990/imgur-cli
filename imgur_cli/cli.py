@@ -16,11 +16,6 @@ from imgur_cli import cli_api
 from imgur_cli.exceptions import CommandError
 from imgur_cli.utils import cli_arg
 
-try:
-    from imgur_cli.config import config
-except ImportError:
-    config = None
-
 logger = logging.getLogger(__name__)
 
 
@@ -29,18 +24,11 @@ def imgur_credentials():
                                   ['client_id', 'client_secret', 'access_token',
                                    'refresh_token', 'mashape_key'])
 
-    if config:
-        client_id = config.get('IMGUR_CLIENT_ID')
-        client_secret = config.get('IMGUR_CLIENT_SECRET')
-        access_token = config.get('IMGUR_ACCESS_TOKEN')
-        refresh_token = config.get('IMGUR_REFRESH_TOKEN')
-        mashape_key = config.get('IMGUR_MASHAPE_KEY')
-    else:
-        client_id = os.environ.get('IMGUR_CLIENT_ID')
-        client_secret = os.environ.get('IMGUR_CLIENT_SECRET')
-        access_token = os.environ.get('IMGUR_ACCESS_TOKEN')
-        refresh_token = os.environ.get('IMGUR_REFRESH_TOKEN')
-        mashape_key = os.environ.get('IMGUR_MASHAPE_KEY')
+    client_id = os.environ.get('IMGUR_CLIENT_ID')
+    client_secret = os.environ.get('IMGUR_CLIENT_SECRET')
+    access_token = os.environ.get('IMGUR_ACCESS_TOKEN')
+    refresh_token = os.environ.get('IMGUR_REFRESH_TOKEN')
+    mashape_key = os.environ.get('IMGUR_MASHAPE_KEY')
 
     if not client_id or not client_secret:
         raise imgurpython.client.ImgurClientError('Client credentials not found. '
@@ -124,7 +112,7 @@ class ImgurCli():
              help='Display help for <subcommand>')
     def cmd_help(self, args):
         """Display help about this program or one of its subcommands"""
-        print('UEG -> do_help', args.command)
+        print('UEG -> cmd_help', args.command)
         if args.command:
             if args.command in self.subcommands:
                 self.subcommands[args.command].print_help()
@@ -144,10 +132,10 @@ class ImgurCli():
         print(args.func)
         # Short-circuit and deal with help right away
         if args.func == self.cmd_help:
-            self.do_help(args)
+            self.cmd_help(args)
             return 0
         if args.func == self.cmd_bash_completion:
-            self.do_bash_completion()
+            self.cmd_bash_completion()
             return 0
         self.client = imgurpython.ImgurClient(*credentials)
         args.func(self.client, args)
