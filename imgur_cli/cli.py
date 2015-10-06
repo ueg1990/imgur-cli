@@ -89,7 +89,7 @@ class ImgurCli():
             self.subcommands[command] = subparser
             for args, kwargs in arguments:
                 subparser.add_argument(*args, **kwargs)
-                subparser.set_defaults(func=callback)
+            subparser.set_defaults(func=callback)
 
     def _add_base_completion_subparser(self, subparsers):
         subparser = subparsers.add_parser('bash_completion', add_help=False)
@@ -129,7 +129,6 @@ class ImgurCli():
             self.parser.print_help()
             return 0
         args = self.parser.parse_args(argv)
-        print(args.func)
         # Short-circuit and deal with help right away
         if args.func == self.cmd_help:
             self.cmd_help(args)
