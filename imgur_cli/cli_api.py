@@ -21,7 +21,7 @@ from imgur_cli.utils import cli_arg
          help='Show or hide viral images from the '
          '"user" section (Defaults to %(default)s)')
 def cmd_gallery(client, args):
-    """Print items from Imgur gallery"""
+    """Returns the images in the gallery"""
     gallery = client.gallery()
     data = [item.__dict__ for item in gallery]
     print(json.dumps({'gallery': data}, indent=4, separators=(',', ': ')))

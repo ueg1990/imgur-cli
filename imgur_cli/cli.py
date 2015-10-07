@@ -70,7 +70,6 @@ class ImgurCli():
         actions_module = cli_api
         self._find_actions(subparsers, actions_module)
         self._find_actions(subparsers, self)
-        self._add_base_completion_subparser(subparsers)
         return parser
 
     def _find_actions(self, subparsers, actions_module):
@@ -90,23 +89,6 @@ class ImgurCli():
             for args, kwargs in arguments:
                 subparser.add_argument(*args, **kwargs)
             subparser.set_defaults(func=callback)
-
-    def _add_base_completion_subparser(self, subparsers):
-        subparser = subparsers.add_parser('bash_completion', add_help=False)
-        self.subcommands['bash_completion'] = subparser
-        subparser.set_defaults(func=self.cmd_bash_completion)
-
-    def cmd_bash_completion(self):
-        """Prints arguments for bash-completion"""
-        commands = set()
-        options = set()
-        for key, value in self.subcommands.items():
-            commands.add(key)
-            options.update(option for option in
-                           value._optionals._option_string_actions.keys())
-        commands.remove('bash-completion')
-        commands.remove('bash_completion')
-        print(' '.join(commands | options))
 
     @cli_arg('command', metavar='<subcommand', nargs='?',
              help='Display help for <subcommand>')
@@ -131,9 +113,6 @@ class ImgurCli():
         # Short-circuit and deal with help right away
         if args.func == self.cmd_help:
             self.cmd_help(args)
-            return 0
-        if args.func == self.cmd_bash_completion:
-            self.cmd_bash_completion()
             return 0
         self.client = imgurpython.ImgurClient(*credentials)
         args.func(self.client, args)
