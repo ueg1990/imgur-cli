@@ -112,7 +112,6 @@ class ImgurCli():
              help='Display help for <subcommand>')
     def cmd_help(self, args):
         """Display help about this program or one of its subcommands"""
-        print('UEG -> cmd_help', args.command)
         if args.command:
             if args.command in self.subcommands:
                 self.subcommands[args.command].print_help()
