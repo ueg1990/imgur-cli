@@ -1,7 +1,6 @@
-import json
-
 from imgur_cli.exceptions import CommandError
 from imgur_cli.utils import cli_arg
+from imgur_cli.utils import generate_output
 
 
 @cli_arg('--section', default='hot', metavar='<section>',
@@ -20,8 +19,10 @@ from imgur_cli.utils import cli_arg
 @cli_arg('--show-viral', default='False', action='store_true',
          help='Show or hide viral images from the '
          '"user" section (Defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
 def cmd_gallery(client, args):
     """Returns the images in the gallery"""
     gallery = client.gallery()
     data = [item.__dict__ for item in gallery]
-    print(json.dumps({'gallery': data}, indent=4, separators=(',', ': ')))
+    generate_output(args.output_file, {'gallery': data})
