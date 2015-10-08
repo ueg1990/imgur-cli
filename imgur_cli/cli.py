@@ -40,6 +40,11 @@ def imgur_credentials():
 
 
 class ImgurCli():
+    
+    def __init__(self):
+        self.subcommands = {}
+        self.parser = None
+        self.client = None
 
     @property
     def base_parser(self):
@@ -65,7 +70,6 @@ class ImgurCli():
     @property
     def subcommand_parser(self):
         parser = self.base_parser
-        self.subcommands = {}
         subparsers = parser.add_subparsers(metavar='<subcommand>')
         actions_module = cli_api
         self._find_actions(subparsers, actions_module)
@@ -85,10 +89,13 @@ class ImgurCli():
                                               add_help=False)
             subparser.add_argument('-h', '--help', action='help',
                                    help=argparse.SUPPRESS)
-            self.subcommands[command] = subparser
             for args, kwargs in arguments:
                 subparser.add_argument(*args, **kwargs)
+                subparser.add_argument('--output-file', default=None,
+                                        metavar='<output_file>',
+                                       help='Save output to a JSON file')
             subparser.set_defaults(func=callback)
+            self.subcommands[command] = subparser
 
     @cli_arg('command', metavar='<subcommand', nargs='?',
              help='Display help for <subcommand>')
