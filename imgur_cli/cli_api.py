@@ -19,8 +19,6 @@ from imgur_cli.utils import generate_output
 @cli_arg('--show-viral', default='False', action='store_true',
          help='Show or hide viral images from the '
          '"user" section (Defaults to %(default)s)')
-@cli_arg('--output-file', default=None, metavar='<output_file>',
-         help='Save output to a JSON file')
 def cmd_gallery(client, args):
     """Returns the images in the gallery"""
     gallery = client.gallery()
@@ -28,8 +26,6 @@ def cmd_gallery(client, args):
     generate_output(args.output_file, {'gallery': data})
     
 @cli_arg('album_id', help='Album ID')
-@cli_arg('--output-file', default=None, metavar='<output_file>',
-         help='Save output to a JSON file')
 def cmd_album(client, args):
     """Get information about a specific album"""
     album = client.album(args.album_id)
