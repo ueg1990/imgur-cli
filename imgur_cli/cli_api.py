@@ -32,3 +32,11 @@ def cmd_album(client, args):
     album = client.get_album(args.album_id)
     data = album.__dict__
     generate_output(args.output_file, {'album': data})
+
+
+@cli_arg('album_id', help='Album ID')
+def cmd_album_images(client, args):
+    """Get information about a specific album"""
+    album_images = client.get_album_images(args.album_id)
+    data = [item.__dict__ for item in album_images]
+    generate_output(args.output_file, {'album_images': data})
