@@ -24,10 +24,11 @@ def cmd_gallery(client, args):
     gallery = client.gallery()
     data = [item.__dict__ for item in gallery]
     generate_output(args.output_file, {'gallery': data})
-    
+
+
 @cli_arg('album_id', help='Album ID')
 def cmd_album(client, args):
     """Get information about a specific album"""
-    album = client.album(args.album_id)
-    data = [item.__dict__ for item in album]
+    album = client.get_album(args.album_id)
+    data = album.__dict__
     generate_output(args.output_file, {'album': data})
