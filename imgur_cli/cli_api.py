@@ -48,3 +48,13 @@ def cmd_image(client, args):
     image = client.get_image(args.image_id)
     data = image.__dict__
     generate_output(args.output_file, {'image': data})
+
+
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='A page of random gallery images, from 0-50. '
+         'Pages are regenerated every hour (defaults to %(default)s)')
+def cmd_gallery_random(client, args):
+    """Returns a random set of gallery images"""
+    gallery_random = client.gallery_random(args.page)
+    data = [item.__dict__ for item in gallery_random]
+    generate_output(args.output_file, {'gallery_random': data})
