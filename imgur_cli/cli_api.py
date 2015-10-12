@@ -19,9 +19,12 @@ from imgur_cli.utils import generate_output
 @cli_arg('--show-viral', default='False', action='store_true',
          help='Show or hide viral images from the '
          '"user" section (Defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
 def cmd_gallery(client, args):
     """Returns the images in the gallery"""
-    gallery = client.gallery()
+    gallery = client.gallery(args.section, args.sort, args.page, args.window,
+                             args.show_viral)
     data = [item.__dict__ for item in gallery]
     generate_output(args.output_file, {'gallery': data})
 
@@ -35,6 +38,8 @@ def cmd_album(client, args):
 
 
 @cli_arg('album_id', help='Album ID')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
 def cmd_album_images(client, args):
     """Get information about a specific album"""
     album_images = client.get_album_images(args.album_id)
@@ -53,6 +58,8 @@ def cmd_image(client, args):
 @cli_arg('--page', default=0, metavar='<page>', type=int,
          help='A page of random gallery images, from 0-50. '
          'Pages are regenerated every hour (defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
 def cmd_gallery_random(client, args):
     """Returns a random set of gallery images"""
     gallery_random = client.gallery_random(args.page)

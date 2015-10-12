@@ -91,9 +91,6 @@ class ImgurCli():
                                    help=argparse.SUPPRESS)
             for args, kwargs in arguments:
                 subparser.add_argument(*args, **kwargs)
-            subparser.add_argument('--output-file', default=None,
-                                   metavar='<output_file>',
-                                   help='Save output to a JSON file')
             subparser.set_defaults(func=callback)
             self.subcommands[command] = subparser
 
