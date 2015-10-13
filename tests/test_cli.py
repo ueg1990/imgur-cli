@@ -49,4 +49,5 @@ class TestImgurCli(testtools.TestCase):
                           cli.imgur_credentials)
 
     def test_help_unknown_command(self):
+        self.make_env()
         self.assertRaises(exceptions.CommandError, self.cli, 'help foofoo')
