@@ -1,3 +1,5 @@
+import imgurpython
+
 from imgur_cli.exceptions import CommandError
 from imgur_cli.utils import cli_arg
 from imgur_cli.utils import generate_output
@@ -77,8 +79,11 @@ def cmd_gallery_random(client, args):
          choices=['day', 'week', 'month', 'year', 'all'],
          help='Change the date range of the request if the sort is "top", '
          'day | week | month | year | all (Defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
 def cmd_gallery_tag(client, args):
     """View images for a gallery tag"""
     gallery_tag = client.gallery_tag(args.tag, args.sort, args.page, args.window)
     data = gallery_tag.__dict__
+    data['items'] = [item.__dict__ for item in data['items']]
     generate_output({'gallery_tag': data})
