@@ -7,6 +7,7 @@ import testtools
 from unittest import mock
 
 import imgur_cli.cli as cli
+from imgur_cli import exceptions
 
 FAKE_ENV = {'IMGUR_CLIENT_ID': 'client_id',
             'IMGUR_CLIENT_SECRET': 'client_secret',
@@ -16,6 +17,13 @@ FAKE_ENV = {'IMGUR_CLIENT_ID': 'client_id',
 
 
 class TestImgurCli(testtools.TestCase):
+
+    def setUp(self):
+        super(TestImgurCli, self).setUp()
+
+    def cli(self, argv):
+        _cli = cli.ImgurCli()
+        return _cli.main(argv.split())
 
     def make_env(self, exclude=None):
         env = {key: value for key, value in FAKE_ENV.items() if key != exclude}
@@ -39,3 +47,6 @@ class TestImgurCli(testtools.TestCase):
         self.make_env(exclude='IMGUR_CLIENT_SECRET')
         self.assertRaises(imgurpython.client.ImgurClientError,
                           cli.imgur_credentials)
+
+    def test_help_unknown_command(self):
+        self.assertRaises(exceptions.CommandError, self.cli, 'help foofoo')

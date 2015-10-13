@@ -39,7 +39,7 @@ def imgur_credentials():
                             refresh_token, mashape_key)
 
 
-class ImgurCli():
+class ImgurCli:
 
     def __init__(self):
         self.subcommands = {}
