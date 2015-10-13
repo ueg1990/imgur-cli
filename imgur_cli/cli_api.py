@@ -13,7 +13,7 @@ from imgur_cli.utils import generate_output
 @cli_arg('--page', default=0, metavar='<page>', type=int,
          help='The data paging number (defaults to %(default)s)')
 @cli_arg('--window', default='day', metavar='<window>',
-         choices=['hot', 'top', 'user'],
+         choices=['day', 'week', 'month', 'year', 'all'],
          help='Change the date range of the request if the section is "top", '
          'day | week | month | year | all (Defaults to %(default)s)')
 @cli_arg('--show-viral', default='False', action='store_true',
@@ -65,3 +65,20 @@ def cmd_gallery_random(client, args):
     gallery_random = client.gallery_random(args.page)
     data = [item.__dict__ for item in gallery_random]
     generate_output(args.output_file, {'gallery_random': data})
+
+
+@cli_arg('tag', help='The name of the tag')
+@cli_arg('--sort', default='viral', metavar='<sort>',
+         choices=['viral', 'top', 'time'],
+         help='viral | top | time | - defaults to %(default)s')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='The data paging number (defaults to %(default)s)')
+@cli_arg('--window', default='week', metavar='<window>',
+         choices=['day', 'week', 'month', 'year', 'all'],
+         help='Change the date range of the request if the sort is "top", '
+         'day | week | month | year | all (Defaults to %(default)s)')
+def cmd_gallery_tag(client, args):
+	"""View images for a gallery tag"""
+	gallery_tag = client.gallery_tag(args.tag, args.sort, args.page, args.window)
+	data = gallery_tag.__dict__
+	generate_output(args.output_file, {'gallery_tag' : data})
