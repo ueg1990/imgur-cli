@@ -108,7 +108,6 @@ class ImgurCli:
             self.parser.print_help()
 
     def main(self, argv):
-        credentials = imgur_credentials()
         self.parser = self.subcommand_parser
         if not argv:
             self.parser.print_help()
@@ -118,6 +117,7 @@ class ImgurCli:
         if args.func == self.cmd_help:
             self.cmd_help(args)
             return 0
+        credentials = imgur_credentials()
         self.client = imgurpython.ImgurClient(*credentials)
         args.func(self.client, args)
 
