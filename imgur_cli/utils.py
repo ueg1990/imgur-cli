@@ -20,10 +20,10 @@ def add_arg(func, *args, **kwargs):
         func.arguments.insert(0, (args, kwargs))
 
 
-def generate_output(output_filename, result):
-    if not output_filename:
-        print(json.dumps(result, indent=4, separators=(',', ': ')))
-    else:
+def generate_output(result, output_filename=None):
+    if output_filename:
         with open(output_filename, 'w') as json_file:
             data = json.dumps(result, json_file, indent=4, separators=(',', ': '))
             json_file.write(data)
+    else:
+        print(json.dumps(result, indent=4, separators=(',', ': ')))

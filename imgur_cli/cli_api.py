@@ -26,7 +26,7 @@ def cmd_gallery(client, args):
     gallery = client.gallery(args.section, args.sort, args.page, args.window,
                              args.show_viral)
     data = [item.__dict__ for item in gallery]
-    generate_output(args.output_file, {'gallery': data})
+    generate_output({'gallery': data}, args.output_file)
 
 
 @cli_arg('album_id', help='Album ID')
@@ -34,7 +34,7 @@ def cmd_album(client, args):
     """Get information about a specific album"""
     album = client.get_album(args.album_id)
     data = album.__dict__
-    generate_output(args.output_file, {'album': data})
+    generate_output({'album': data})
 
 
 @cli_arg('album_id', help='Album ID')
@@ -44,7 +44,7 @@ def cmd_album_images(client, args):
     """Get information about a specific album"""
     album_images = client.get_album_images(args.album_id)
     data = [item.__dict__ for item in album_images]
-    generate_output(args.output_file, {'album_images': data})
+    generate_output({'album_images': data}, args.output_file)
 
 
 @cli_arg('image_id', help='Image ID')
@@ -52,7 +52,7 @@ def cmd_image(client, args):
     """Get information about an image"""
     image = client.get_image(args.image_id)
     data = image.__dict__
-    generate_output(args.output_file, {'image': data})
+    generate_output({'image': data})
 
 
 @cli_arg('--page', default=0, metavar='<page>', type=int,
@@ -64,7 +64,7 @@ def cmd_gallery_random(client, args):
     """Returns a random set of gallery images"""
     gallery_random = client.gallery_random(args.page)
     data = [item.__dict__ for item in gallery_random]
-    generate_output(args.output_file, {'gallery_random': data})
+    generate_output({'gallery_random': data}, args.output_file)
 
 
 @cli_arg('tag', help='The name of the tag')
@@ -78,7 +78,7 @@ def cmd_gallery_random(client, args):
          help='Change the date range of the request if the sort is "top", '
          'day | week | month | year | all (Defaults to %(default)s)')
 def cmd_gallery_tag(client, args):
-	"""View images for a gallery tag"""
-	gallery_tag = client.gallery_tag(args.tag, args.sort, args.page, args.window)
-	data = gallery_tag.__dict__
-	generate_output(args.output_file, {'gallery_tag' : data})
+    """View images for a gallery tag"""
+    gallery_tag = client.gallery_tag(args.tag, args.sort, args.page, args.window)
+    data = gallery_tag.__dict__
+    generate_output({'gallery_tag': data})
