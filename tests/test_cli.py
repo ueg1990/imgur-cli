@@ -149,3 +149,15 @@ class TestImgurCli(testtools.TestCase):
                          'window': 'week', 'output_file': None}
         self.assertTrue(all(getattr(parser_args, key) == value
                             for key, value in expected_args.items()))
+
+    def test_gallery_tag_image(self):
+        argv = ['gallery-tag-image', 'dogs', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertTrue(argv[0] in _cli.subcommands)
+        self.assertEqual(parser_args.tag, argv[1])
+        self.assertEqual(parser_args.image_id, argv[2])
+        self.assertEqual(parser_args.func.__name__, 'cmd_gallery_tag_image')
+        self.assertTrue(_cli.client.gallery_tag_image.called)
+        self.assertRaises(SystemExit, self.cli, ['gallery-tag-image'])
+        self.assertRaises(SystemExit, self.cli, ['gallery-tag-image', 'dogs'])
