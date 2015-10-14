@@ -17,6 +17,11 @@ FAKE_ENV = {'IMGUR_CLIENT_ID': 'client_id',
             'IMGUR_MASHAPE_KEY': 'mashape_key'}
 
 
+class DevNull(object):
+    def write(self, data):
+        pass
+
+
 class TestImgurCli(testtools.TestCase):
 
     def setUp(self):
@@ -25,11 +30,14 @@ class TestImgurCli(testtools.TestCase):
         self.mock_client.start()
         self.mock_output = mock.patch('imgur_cli.cli_api.generate_output')
         self.mock_output.start()
+        self.old_stderr = sys.stderr
+        sys.stderr = DevNull()
 
     def tearDown(self):
         super(TestImgurCli, self).tearDown()
         self.mock_client.stop()
         self.mock_output.stop()
+        sys.stderr = self.old_stderr
 
     def cli(self, argv, exclude=None):
         self.make_env(exclude)
