@@ -81,3 +81,16 @@ class TestImgurCli(testtools.TestCase):
         self.assertEqual(parser_args.func.__name__, 'cmd_image')
         self.assertTrue(_cli.client.get_image.called)
         self.assertRaises(SystemExit, self.cli, ['image'])
+
+    def test_album_images(self):
+        argv = ['album-images', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertTrue(argv[0] in _cli.subcommands)
+        self.assertEqual(parser_args.album_id, argv[1])
+        self.assertEqual(parser_args.output_file, None)
+        self.assertEqual(parser_args.func.__name__, 'cmd_album_images')
+        self.assertTrue(_cli.client.get_album_images.called)
+        self.assertRaises(SystemExit, self.cli, ['album-images'])
+        self.assertRaises(SystemExit, self.cli,
+                          ['album-images', '--output-file', 'dummy.json'])
