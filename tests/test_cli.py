@@ -70,6 +70,22 @@ class TestImgurCli(testtools.TestCase):
     def test_help_unknown_command(self):
         self.assertRaises(exceptions.CommandError, self.cli, ['help', 'foofoo'])
 
+    def test_gallery(self):
+        argv = ['gallery']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertTrue(argv[0] in _cli.subcommands)
+        expected_args = {'section': 'hot', 'sort': 'viral', 'page': 0,
+                         'window': 'day', 'show_viral': False, 'output_file': None}
+        self.assertTrue(all(getattr(parser_args, key) == value
+                            for key, value in expected_args.items()))
+        argv.extend(['--show-viral'])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        expected_args['show_viral'] = True
+        self.assertTrue(all(getattr(parser_args, key) == value
+                            for key, value in expected_args.items()))
+
     def test_album(self):
         argv = ['album', '123']
         _cli = self.cli(argv)
@@ -79,16 +95,6 @@ class TestImgurCli(testtools.TestCase):
         self.assertEqual(parser_args.func.__name__, 'cmd_album')
         self.assertTrue(_cli.client.get_album.called)
         self.assertRaises(SystemExit, self.cli, ['album'])
-
-    def test_image(self):
-        argv = ['image', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertTrue(argv[0] in _cli.subcommands)
-        self.assertEqual(parser_args.image_id, argv[1])
-        self.assertEqual(parser_args.func.__name__, 'cmd_image')
-        self.assertTrue(_cli.client.get_image.called)
-        self.assertRaises(SystemExit, self.cli, ['image'])
 
     def test_album_images(self):
         argv = ['album-images', '123']
@@ -102,6 +108,16 @@ class TestImgurCli(testtools.TestCase):
         self.assertRaises(SystemExit, self.cli, ['album-images'])
         self.assertRaises(SystemExit, self.cli,
                           ['album-images', '--output-file', 'dummy.json'])
+
+    def test_image(self):
+        argv = ['image', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertTrue(argv[0] in _cli.subcommands)
+        self.assertEqual(parser_args.image_id, argv[1])
+        self.assertEqual(parser_args.func.__name__, 'cmd_image')
+        self.assertTrue(_cli.client.get_image.called)
+        self.assertRaises(SystemExit, self.cli, ['image'])
 
     def test_gallery_random(self):
         argv = ['gallery-random']

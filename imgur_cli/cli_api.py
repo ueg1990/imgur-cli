@@ -18,9 +18,8 @@ from imgur_cli.utils import generate_output
          choices=['day', 'week', 'month', 'year', 'all'],
          help='Change the date range of the request if the section is "top", '
          'day | week | month | year | all (Defaults to %(default)s)')
-@cli_arg('--show-viral', default='False', action='store_true',
-         help='Show or hide viral images from the '
-         '"user" section (Defaults to %(default)s)')
+@cli_arg('--show-viral', action='store_true', help='Show or hide viral images '
+         'from the "user" section (Defaults to %(default)s)')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
 def cmd_gallery(client, args):
