@@ -27,7 +27,7 @@ class TestImgurCli(testtools.TestCase):
     def setUp(self):
         super(TestImgurCli, self).setUp()
         self.mock_client = mock.patch('imgur_cli.cli.imgurpython.ImgurClient')
-        self.mock_client.start()
+        self._client = self.mock_client.start()
         self.mock_output = mock.patch('imgur_cli.cli_api.generate_output')
         self.mock_output.start()
         self.old_stderr = sys.stderr
@@ -75,6 +75,8 @@ class TestImgurCli(testtools.TestCase):
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertTrue(argv[0] in _cli.subcommands)
+        self.assertEqual(parser_args.func.__name__, 'cmd_gallery')
+        self.assertTrue(_cli.client.gallery.called)
         expected_args = {'section': 'hot', 'sort': 'viral', 'page': 0,
                          'window': 'day', 'show_viral': False, 'output_file': None}
         self.assertTrue(all(getattr(parser_args, key) == value
@@ -124,6 +126,8 @@ class TestImgurCli(testtools.TestCase):
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertTrue(argv[0] in _cli.subcommands)
+        self.assertEqual(parser_args.func.__name__, 'cmd_gallery_random')
+        self.assertTrue(_cli.client.gallery_random.called)
         self.assertEqual(parser_args.page, 0)
         self.assertEqual(parser_args.output_file, None)
         argv.extend(['--page', '12', '--output-file', 'dummy.json'])
@@ -132,3 +136,16 @@ class TestImgurCli(testtools.TestCase):
         self.assertEqual(parser_args.page, int(argv[2]))
         self.assertEqual(parser_args.output_file, argv[4])
         self.assertTrue(isinstance(parser_args.page, int))
+
+    def test_gallery_tag(self):
+        argv = ['gallery-tag', 'dogs']
+        self._client.return_value.gallery_tag.return_value = mock.Mock(items=[])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertTrue(argv[0] in _cli.subcommands)
+        self.assertEqual(parser_args.func.__name__, 'cmd_gallery_tag')
+        self.assertTrue(_cli.client.gallery_tag.called)
+        expected_args = {'tag': 'dogs', 'sort': 'viral', 'page': 0,
+                         'window': 'week', 'output_file': None}
+        self.assertTrue(all(getattr(parser_args, key) == value
+                            for key, value in expected_args.items()))
