@@ -64,3 +64,13 @@ class TestImgurCli(testtools.TestCase):
         self.assertEqual(parser_args.func.__name__, 'cmd_album')
         self.assertTrue(_cli.client.get_album.called)
         self.assertRaises(SystemExit, self.cli, ['album'])
+
+    def test_image(self, mock_client, mock_output):
+        argv = ['image', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertTrue(argv[0] in _cli.subcommands)
+        self.assertEqual(parser_args.image_id, argv[1])
+        self.assertEqual(parser_args.func.__name__, 'cmd_image')
+        self.assertTrue(_cli.client.get_image.called)
+        self.assertRaises(SystemExit, self.cli, ['image'])
