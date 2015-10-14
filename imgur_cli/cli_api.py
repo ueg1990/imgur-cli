@@ -86,3 +86,11 @@ def cmd_gallery_tag(client, args):
     data = gallery_tag.__dict__
     data['items'] = [item.__dict__ for item in data['items']]
     generate_output({'gallery_tag': data})
+
+
+@cli_arg('tag', help='The name of the tag')
+@cli_arg('image_id', help='Image ID')
+def cmd_gallery_tag_image(client, args):
+    gallery_tag_image = client.gallery_tag_image(args.tag, args.image_id)
+    data = gallery_tag_image.__dict__
+    generate_output({'gallery_tag_image': data})
