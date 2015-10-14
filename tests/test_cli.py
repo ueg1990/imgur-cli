@@ -17,7 +17,7 @@ FAKE_ENV = {'IMGUR_CLIENT_ID': 'client_id',
             'IMGUR_MASHAPE_KEY': 'mashape_key'}
 
 
-class DevNull(object):
+class DevNull:
     def write(self, data):
         pass
 
@@ -102,3 +102,17 @@ class TestImgurCli(testtools.TestCase):
         self.assertRaises(SystemExit, self.cli, ['album-images'])
         self.assertRaises(SystemExit, self.cli,
                           ['album-images', '--output-file', 'dummy.json'])
+
+    def test_gallery_random(self):
+        argv = ['gallery-random']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertTrue(argv[0] in _cli.subcommands)
+        self.assertEqual(parser_args.page, 0)
+        self.assertEqual(parser_args.output_file, None)
+        argv.extend(['--page', '12', '--output-file', 'dummy.json'])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertEqual(parser_args.page, int(argv[2]))
+        self.assertEqual(parser_args.output_file, argv[4])
+        self.assertTrue(isinstance(parser_args.page, int))
