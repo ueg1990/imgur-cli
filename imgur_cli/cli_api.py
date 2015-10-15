@@ -91,6 +91,15 @@ def cmd_gallery_tag(client, args):
 @cli_arg('tag', help='The name of the tag')
 @cli_arg('image_id', help='Image ID')
 def cmd_gallery_tag_image(client, args):
+    """View a single image in a gallery tag"""
     gallery_tag_image = client.gallery_tag_image(args.tag, args.image_id)
     data = gallery_tag_image.__dict__
     generate_output({'gallery_tag_image': data})
+
+
+@cli_arg('item_id', help='Gallery item ID')
+def cmd_gallery_item_tags(client, args):
+    """View tags for a gallery item"""
+    gallery_item_tags = client.gallery_item_tags(args.item_id)
+    data = [item.__dict__ for item in gallery_item_tags]
+    generate_output({'gallery_item_tags': data})
