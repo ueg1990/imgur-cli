@@ -45,6 +45,27 @@ class TestImgurCli(testtools.TestCase):
         _cli.main(argv)
         return _cli
 
+    def assertParser(self, _cli, parser_args, argv):
+        """
+        Assertion method for parser and positional arguments. Parameter argv
+        is a list where the first item is the name of the CLI command and the
+        remaining items are positional arguments
+        """
+        cmd = 'cmd_' + argv[0].replace('-', '_')
+        self.assertTrue(argv[0] in _cli.subcommands)
+        self.assertEqual(parser_args.func.__name__, cmd)
+        number_of_positional_arguments = len(argv) - 1
+        if number_of_positional_arguments:
+            positional_args = []
+            for item in parser_args.func.arguments:
+                arg = item[0][0]
+                if arg.startswith('--'):
+                    break
+                positional_args.append(arg)
+            for index, arg in enumerate(positional_args, start=1):
+                self.assertEqual(getattr(parser_args, arg), argv[index])
+                self.assertRaises(SystemExit, self.cli, argv[:index])
+
     def make_env(self, exclude=None):
         env = {key: value for key, value in FAKE_ENV.items() if key != exclude}
         self.useFixture(fixtures.MonkeyPatch('os.environ', env))
@@ -74,8 +95,7 @@ class TestImgurCli(testtools.TestCase):
         argv = ['gallery']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
-        self.assertTrue(argv[0] in _cli.subcommands)
-        self.assertEqual(parser_args.func.__name__, 'cmd_gallery')
+        self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.gallery.called)
         expected_args = {'section': 'hot', 'sort': 'viral', 'page': 0,
                          'window': 'day', 'show_viral': False, 'output_file': None}
@@ -92,22 +112,16 @@ class TestImgurCli(testtools.TestCase):
         argv = ['album', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
-        self.assertTrue(argv[0] in _cli.subcommands)
-        self.assertEqual(parser_args.album_id, argv[1])
-        self.assertEqual(parser_args.func.__name__, 'cmd_album')
+        self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_album.called)
-        self.assertRaises(SystemExit, self.cli, argv[0])
 
     def test_album_images(self):
         argv = ['album-images', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
-        self.assertTrue(argv[0] in _cli.subcommands)
-        self.assertEqual(parser_args.album_id, argv[1])
+        self.assertParser(_cli, parser_args, argv)
         self.assertEqual(parser_args.output_file, None)
-        self.assertEqual(parser_args.func.__name__, 'cmd_album_images')
         self.assertTrue(_cli.client.get_album_images.called)
-        self.assertRaises(SystemExit, self.cli, argv[0])
         self.assertRaises(SystemExit, self.cli,
                           [argv[0], '--output-file', 'dummy.json'])
 
@@ -115,18 +129,14 @@ class TestImgurCli(testtools.TestCase):
         argv = ['image', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
-        self.assertTrue(argv[0] in _cli.subcommands)
-        self.assertEqual(parser_args.image_id, argv[1])
-        self.assertEqual(parser_args.func.__name__, 'cmd_image')
+        self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_image.called)
-        self.assertRaises(SystemExit, self.cli, argv[0])
 
     def test_gallery_random(self):
         argv = ['gallery-random']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
-        self.assertTrue(argv[0] in _cli.subcommands)
-        self.assertEqual(parser_args.func.__name__, 'cmd_gallery_random')
+        self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.gallery_random.called)
         self.assertEqual(parser_args.page, 0)
         self.assertEqual(parser_args.output_file, None)
@@ -142,10 +152,8 @@ class TestImgurCli(testtools.TestCase):
         self._client.return_value.gallery_tag.return_value = mock.Mock(items=[])
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
-        self.assertTrue(argv[0] in _cli.subcommands)
-        self.assertEqual(parser_args.func.__name__, 'cmd_gallery_tag')
+        self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.gallery_tag.called)
-        self.assertRaises(SystemExit, self.cli, argv[0])
         expected_args = {'tag': argv[1], 'sort': 'viral', 'page': 0,
                          'window': 'week', 'output_file': None}
         self.assertTrue(all(getattr(parser_args, key) == value
@@ -155,20 +163,12 @@ class TestImgurCli(testtools.TestCase):
         argv = ['gallery-tag-image', 'dogs', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
-        self.assertTrue(argv[0] in _cli.subcommands)
-        self.assertEqual(parser_args.tag, argv[1])
-        self.assertEqual(parser_args.image_id, argv[2])
-        self.assertEqual(parser_args.func.__name__, 'cmd_gallery_tag_image')
+        self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.gallery_tag_image.called)
-        self.assertRaises(SystemExit, self.cli, argv[0])
-        self.assertRaises(SystemExit, self.cli, argv[:2])
 
     def test_gallery_item_tags(self):
         argv = ['gallery-item-tags', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
-        self.assertTrue(argv[0] in _cli.subcommands)
-        self.assertEqual(parser_args.item_id, argv[1])
-        self.assertEqual(parser_args.func.__name__, 'cmd_gallery_item_tags')
+        self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.gallery_item_tags.called)
-        self.assertRaises(SystemExit, self.cli, argv[0])
