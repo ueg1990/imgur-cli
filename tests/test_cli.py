@@ -178,4 +178,4 @@ class TestImgurCli(testtools.TestCase):
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.gallery_item.called)        
+        self.assertTrue(_cli.client.gallery_item .called)
