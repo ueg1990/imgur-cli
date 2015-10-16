@@ -103,3 +103,11 @@ def cmd_gallery_item_tags(client, args):
     gallery_item_tags = client.gallery_item_tags(args.item_id)
     data = [item.__dict__ for item in gallery_item_tags]
     generate_output({'gallery_item_tags': data})
+
+
+@cli_arg('item_id', help='Gallery item ID')
+def cmd_gallery_item(client, args):
+    """View item in a gallery"""
+    gallery_item = client.gallery_item(args.item_id)
+    data = gallery_item.__dict__
+    generate_output({'gallery_item': data})
