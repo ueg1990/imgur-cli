@@ -125,3 +125,14 @@ def cmd_gallery_comment_count(client, args):
     """List all of the IDs for the comments on an image"""
     gallery_comment_count = client.gallery_comment_count(args.item_id)
     generate_output({'gallery_comment_count': gallery_comment_count})
+
+
+@cli_arg('comment_id', help='Comment ID')
+def cmd_comment(client, args):
+    """Get information about a specific comment"""
+    try:
+        comment = client.get_comment(int(args.comment_id))
+        data = comment.__dict__
+        generate_output({'comment': data})
+    except ValueError:
+        raise CommentError('Given comment id is a string; expecting a number')
