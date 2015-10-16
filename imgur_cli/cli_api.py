@@ -118,3 +118,10 @@ def cmd_gallery_comment_ids(client, args):
     """List all of the IDs for the comments on an image"""
     gallery_comment_ids = client.gallery_comment_ids(args.item_id)
     generate_output({'gallery_comment_ids': gallery_comment_ids})
+
+
+@cli_arg('item_id', help='Gallery item ID')
+def cmd_gallery_comment_count(client, args):
+    """List all of the IDs for the comments on an image"""
+    gallery_comment_count = client.gallery_comment_count(args.item_id)
+    generate_output({'gallery_comment_count': gallery_comment_count})
