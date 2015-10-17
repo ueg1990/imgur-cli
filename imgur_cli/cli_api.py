@@ -23,7 +23,7 @@ from imgur_cli.utils import generate_output
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
 def cmd_gallery(client, args):
-    """Returns the images in the gallery"""
+    """Returns the items in the gallery"""
     gallery = client.gallery(args.section, args.sort, args.page, args.window,
                              args.show_viral)
     data = [item.__dict__ for item in gallery]

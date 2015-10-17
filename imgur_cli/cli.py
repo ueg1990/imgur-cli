@@ -71,8 +71,7 @@ class ImgurCli:
     def subcommand_parser(self):
         parser = self.base_parser
         subparsers = parser.add_subparsers(metavar='<subcommand>')
-        actions_module = cli_api
-        self._find_actions(subparsers, actions_module)
+        self._find_actions(subparsers, cli_api)
         self._find_actions(subparsers, self)
         return parser
 
