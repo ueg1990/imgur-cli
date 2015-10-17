@@ -193,3 +193,12 @@ class TestImgurCli(testtools.TestCase):
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.gallery_comment_count.called)
+
+    def test_comment(self):
+        argv = ['comment', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_comment.called)
+        self.assertRaises(SystemExit, self.cli, [argv[0]])
+        self.assertRaises(exceptions.CommandError, self.cli, [argv[0], 'abc'])

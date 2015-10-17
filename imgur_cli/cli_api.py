@@ -1,6 +1,6 @@
 import imgurpython
 
-from imgur_cli.exceptions import CommandError
+from imgur_cli import exceptions
 from imgur_cli.utils import cli_arg
 from imgur_cli.utils import generate_output
 
@@ -135,4 +135,5 @@ def cmd_comment(client, args):
         data = comment.__dict__
         generate_output({'comment': data})
     except ValueError:
-        raise CommentError('Given comment id is a string; expecting a number')
+        raise exceptions.CommandError('Given comment id is a string; '
+                                      'expecting a number')
