@@ -13,7 +13,7 @@ import imgurpython
 
 from imgur_cli import __version__
 from imgur_cli import cli_api
-from imgur_cli.exceptions import CommandError
+from imgur_cli import exceptions
 from imgur_cli.utils import cli_arg
 
 logger = logging.getLogger(__name__)
@@ -62,12 +62,6 @@ class ImgurCli:
                             help='Print debugging output')
 
         return parser
-
-    def setup_debugging(self):
-        streamformat = "%(levelname)s (%(module)s:%(lineno)d) %(message)s"
-        # Set up the root logger to debug so that the submodules can print
-        # debug messages
-        logging.basicConfig(level=logging.DEBUG, format=streamformat)
 
     def generate_parser(self):
         self.parser = self.base_parser
@@ -121,14 +115,14 @@ class ImgurCli:
                 try:
                     self.subcommands[args.subcommand].print_help()
                 except KeyError:
-                    raise CommandError('{0} is not valid subcommand'
-                                       .format(args.subcommand))
+                    raise exceptions.CommandError('{0} is not valid subcommand'
+                                                  .format(args.subcommand))
             else:
                 try:
                     self.subparsers[args.subparser]['parser'].print_help()
                 except KeyError:
-                    raise CommandError('{0} is not valid subparser'
-                                       .format(args.subparser))
+                    raise exceptions.CommandError('{0} is not valid subparser'
+                                                  .format(args.subparser))
         else:
             self.parser.print_help()
 
@@ -155,7 +149,6 @@ def main():
         imgur_cli = ImgurCli()
         imgur_cli.main(sys.argv[1:])
     except Exception as e:
-        logger.debug(e, exc_info=1)
         print(e, file=sys.stderr)
         sys.exit(1)
 
