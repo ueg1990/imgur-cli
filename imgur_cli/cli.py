@@ -45,6 +45,7 @@ class ImgurCli:
         self.subcommands = {}
         self.parser = None
         self.client = None
+        self.subparsers = {}
 
     @property
     def base_parser(self):
@@ -67,58 +68,85 @@ class ImgurCli:
         # debug messages
         logging.basicConfig(level=logging.DEBUG, format=streamformat)
 
-    @property
-    def subcommand_parser(self):
-        parser = self.base_parser
-        subparsers = parser.add_subparsers(metavar='<subcommand>')
-        self._find_actions(subparsers, cli_api)
-        self._find_actions(subparsers, self)
-        return parser
+    def generate_parser(self):
+        self.parser = self.base_parser
+        base_subparser = self.parser.add_subparsers(metavar='<subparsers>')
+        self._find_actions(self, base_subparser)
+        self._find_subparsers(base_subparser)
+        self._find_actions(cli_api)
 
-    def _find_actions(self, subparsers, actions_module):
+    def _find_subparsers(self, subparser):
+        for name, help in cli_api.SUBPARSERS.items():
+            parser = subparser.add_parser(name, help=help,
+                                          description=help,
+                                          add_help=False)
+            parser.add_argument('-h', '--help', action='help',
+                                help=argparse.SUPPRESS)
+            self.subparsers[name] = {}
+            self.subparsers[name]['parser'] = parser
+            self.subparsers[name]['subparser'] = (
+                parser.add_subparsers(metavar='<subcommands>')
+            )
+
+    def _find_actions(self, actions_module, subparsers=None):
         for attr in (action for action in dir(actions_module)
                      if action.startswith('cmd_')):
-            command = attr[4:].replace('_', '-')
+            name = attr[4:].replace('_', '-')
             callback = getattr(actions_module, attr)
             description = callback.__doc__ or ''
             action_help = description.strip()
+            subparser_name = getattr(callback, 'subparser', None)
+            subparser = (self.subparsers[subparser_name]['subparser']
+                         if subparser_name else subparsers)
             arguments = getattr(callback, 'arguments', [])
-            subparser = subparsers.add_parser(command, help=action_help,
+            subcommand = subparser.add_parser(name, help=action_help,
                                               description=description,
                                               add_help=False)
-            subparser.add_argument('-h', '--help', action='help',
-                                   help=argparse.SUPPRESS)
+            subcommand.add_argument('-h', '--help', action='help',
+                                    help=argparse.SUPPRESS)
             for args, kwargs in arguments:
-                subparser.add_argument(*args, **kwargs)
-            subparser.set_defaults(func=callback)
-            self.subcommands[command] = subparser
+                subcommand.add_argument(*args, **kwargs)
+            subcommand.set_defaults(func=callback)
+            self.subcommands[name] = subcommand
 
-    @cli_arg('command', metavar='<subcommand', nargs='?',
+    @cli_arg('subparser', metavar='<subparser>', nargs='?',
+             help='Display help for <subparser>')
+    @cli_arg('subcommand', metavar='<subcommand>', nargs='?',
              help='Display help for <subcommand>')
     def cmd_help(self, args):
-        """Display help about this program or one of its subcommands"""
-        if args.command:
-            if args.command in self.subcommands:
-                self.subcommands[args.command].print_help()
+        """Display help about this program or one of its subparsers"""
+        if args.subparser:
+            if args.subcommand:
+                try:
+                    self.subcommands[args.subcommand].print_help()
+                except KeyError:
+                    raise CommandError('{0} is not valid subcommand'
+                                       .format(args.subcommand))
             else:
-                raise CommandError('{0} is not valid subcommand'
-                                   .format(args.command))
+                try:
+                    self.subparsers[args.subparser]['parser'].print_help()
+                except KeyError:
+                    raise CommandError('{0} is not valid subparser'
+                                       .format(args.subparser))
         else:
             self.parser.print_help()
 
     def main(self, argv):
-        self.parser = self.subcommand_parser
+        self.generate_parser()
         if not argv:
             self.parser.print_help()
             return 0
         args = self.parser.parse_args(argv)
-        # Short-circuit and deal with help right away
-        if args.func == self.cmd_help:
-            self.cmd_help(args)
-            return 0
-        credentials = imgur_credentials()
-        self.client = imgurpython.ImgurClient(*credentials)
-        args.func(self.client, args)
+        try:
+            # Short-circuit and deal with help right away
+            if args.func == self.cmd_help:
+                self.cmd_help(args)
+                return 0
+            credentials = imgur_credentials()
+            self.client = imgurpython.ImgurClient(*credentials)
+            args.func(self.client, args)
+        except AttributeError:
+            self.subparsers[argv[0]]['parser'].print_help()
 
 
 def main():
