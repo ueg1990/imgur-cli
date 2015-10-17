@@ -47,14 +47,16 @@ class TestImgurCli(testtools.TestCase):
 
     def assertParser(self, _cli, parser_args, argv):
         """
-        Assertion method for parser and positional arguments. Parameter argv
-        is a list where the first item is the name of the CLI command and the
-        remaining items are positional arguments
+        Assertion method for subparsers, subcommands and positional arguments.
+        Parameter argv is a list where the first item is the name of the subparser,
+        followed by the subcommand and the remaining items are positional arguments
         """
-        cmd = 'cmd_' + argv[0].replace('-', '_')
-        self.assertTrue(argv[0] in _cli.subcommands)
+        number_of_parsing_levels = 2
+        cmd = 'cmd_' + argv[1].replace('-', '_')
         self.assertEqual(parser_args.func.__name__, cmd)
-        number_of_positional_arguments = len(argv) - 1
+        self.assertTrue(argv[1] in _cli.subcommands)
+        self.assertTrue(argv[0] in _cli.subparsers)
+        number_of_positional_arguments = len(argv) - number_of_parsing_levels
         if number_of_positional_arguments:
             positional_args = []
             for item in parser_args.func.arguments:
@@ -62,7 +64,8 @@ class TestImgurCli(testtools.TestCase):
                 if arg.startswith('--'):
                     break
                 positional_args.append(arg)
-            for index, arg in enumerate(positional_args, start=1):
+            for index, arg in enumerate(positional_args,
+                                        start=number_of_parsing_levels):
                 self.assertEqual(getattr(parser_args, arg), argv[index])
                 self.assertRaises(SystemExit, self.cli, argv[:index])
 
@@ -88,117 +91,117 @@ class TestImgurCli(testtools.TestCase):
         self.assertRaises(imgurpython.client.ImgurClientError,
                           cli.imgur_credentials)
 
-    # def test_help_unknown_command(self):
-    #     self.assertRaises(exceptions.CommandError, self.cli, ['help', 'foofoo'])
+    def test_help_unknown_command(self):
+        self.assertRaises(exceptions.CommandError, self.cli, ['help', 'foofoo'])
 
-    # def test_gallery(self):
-    #     argv = ['gallery']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.gallery.called)
-    #     expected_args = {'section': 'hot', 'sort': 'viral', 'page': 0,
-    #                      'window': 'day', 'show_viral': False, 'output_file': None}
-    #     self.assertTrue(all(getattr(parser_args, key) == value
-    #                         for key, value in expected_args.items()))
-    #     argv.extend(['--show-viral'])
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     expected_args['show_viral'] = True
-    #     self.assertTrue(all(getattr(parser_args, key) == value
-    #                         for key, value in expected_args.items()))
+    def test_gallery(self):
+        argv = ['gallery', 'items']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery.called)
+        expected_args = {'section': 'hot', 'sort': 'viral', 'page': 0,
+                         'window': 'day', 'show_viral': False, 'output_file': None}
+        self.assertTrue(all(getattr(parser_args, key) == value
+                            for key, value in expected_args.items()))
+        argv.extend(['--show-viral'])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        expected_args['show_viral'] = True
+        self.assertTrue(all(getattr(parser_args, key) == value
+                            for key, value in expected_args.items()))
 
-    # def test_album(self):
-    #     argv = ['album', '123']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.get_album.called)
+    def test_album(self):
+        argv = ['album', 'album-id', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_album.called)
 
-    # def test_album_images(self):
-    #     argv = ['album-images', '123']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertEqual(parser_args.output_file, None)
-    #     self.assertTrue(_cli.client.get_album_images.called)
-    #     self.assertRaises(SystemExit, self.cli,
-    #                       [argv[0], '--output-file', 'dummy.json'])
+    def test_album_images(self):
+        argv = ['album', 'images', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertEqual(parser_args.output_file, None)
+        self.assertTrue(_cli.client.get_album_images.called)
+        self.assertRaises(SystemExit, self.cli,
+                          [argv[0], '--output-file', 'dummy.json'])
 
-    # def test_image(self):
-    #     argv = ['image', '123']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.get_image.called)
+    def test_image(self):
+        argv = ['image', 'image-id', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_image.called)
 
-    # def test_gallery_random(self):
-    #     argv = ['gallery-random']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.gallery_random.called)
-    #     self.assertEqual(parser_args.page, 0)
-    #     self.assertEqual(parser_args.output_file, None)
-    #     argv.extend(['--page', '12', '--output-file', 'dummy.json'])
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertEqual(parser_args.page, int(argv[2]))
-    #     self.assertEqual(parser_args.output_file, argv[4])
-    #     self.assertTrue(isinstance(parser_args.page, int))
+    def test_gallery_random(self):
+        argv = ['gallery', 'random']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery_random.called)
+        self.assertEqual(parser_args.page, 0)
+        self.assertEqual(parser_args.output_file, None)
+        argv.extend(['--page', '12', '--output-file', 'dummy.json'])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertEqual(parser_args.page, int(argv[3]))
+        self.assertEqual(parser_args.output_file, argv[5])
+        self.assertTrue(isinstance(parser_args.page, int))
 
-    # def test_gallery_tag(self):
-    #     argv = ['gallery-tag', 'dogs']
-    #     self._client.return_value.gallery_tag.return_value = mock.Mock(items=[])
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.gallery_tag.called)
-    #     expected_args = {'tag': argv[1], 'sort': 'viral', 'page': 0,
-    #                      'window': 'week', 'output_file': None}
-    #     self.assertTrue(all(getattr(parser_args, key) == value
-    #                         for key, value in expected_args.items()))
+    def test_gallery_tag(self):
+        argv = ['gallery', 'tag', 'dogs']
+        self._client.return_value.gallery_tag.return_value = mock.Mock(items=[])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery_tag.called)
+        expected_args = {'tag': argv[2], 'sort': 'viral', 'page': 0,
+                         'window': 'week', 'output_file': None}
+        self.assertTrue(all(getattr(parser_args, key) == value
+                            for key, value in expected_args.items()))
 
-    # def test_gallery_tag_image(self):
-    #     argv = ['gallery-tag-image', 'dogs', '123']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.gallery_tag_image.called)
+    def test_gallery_tag_image(self):
+        argv = ['gallery', 'tag-image', 'dogs', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery_tag_image.called)
 
-    # def test_gallery_item_tags(self):
-    #     argv = ['gallery-item-tags', '123']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.gallery_item_tags.called)
+    def test_gallery_item_tags(self):
+        argv = ['gallery', 'item-tags', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery_item_tags.called)
 
-    # def test_gallery_item(self):
-    #     argv = ['gallery-item', '123']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.gallery_item .called)
+    def test_gallery_item(self):
+        argv = ['gallery', 'item', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery_item .called)
 
-    # def test_gallery_comment_ids(self):
-    #     argv = ['gallery-comment-ids', '123']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.gallery_comment_ids.called)
+    def test_gallery_comment_ids(self):
+        argv = ['gallery', 'comment-ids', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery_comment_ids.called)
 
-    # def test_gallery_comment_count(self):
-    #     argv = ['gallery-comment-count', '123']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.gallery_comment_count.called)
+    def test_gallery_comment_count(self):
+        argv = ['gallery', 'comment-count', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery_comment_count.called)
 
-    # def test_comment(self):
-    #     argv = ['comment', '123']
-    #     _cli = self.cli(argv)
-    #     parser_args = _cli.parser.parse_args(argv)
-    #     self.assertParser(_cli, parser_args, argv)
-    #     self.assertTrue(_cli.client.get_comment.called)
-    #     self.assertRaises(SystemExit, self.cli, [argv[0]])
-    #     self.assertRaises(exceptions.CommandError, self.cli, [argv[0], 'abc'])
+    def test_comment(self):
+        argv = ['comment', 'comment-id', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_comment.called)
+        argv[2] = 'abc'
+        self.assertRaises(exceptions.CommandError, self.cli, argv)
