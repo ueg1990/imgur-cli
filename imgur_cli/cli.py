@@ -50,8 +50,9 @@ class ImgurCli:
     @property
     def base_parser(self):
         parser = argparse.ArgumentParser(prog='imgur', description=__doc__.strip(),
-                                         epilog='See "imgur help COMMAND" for '
-                                         'help on a specific command')
+                                         epilog='See "imgur help <SUBPARSER> '
+                                         '<SUBCOMMAND>" for help on a specific '
+                                         'subparser or subcommand')
 
         # Global arguments
         parser.add_argument('-v', '--version', action='version',

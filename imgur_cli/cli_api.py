@@ -29,7 +29,7 @@ SUBPARSERS = {'gallery': 'Gallery subparser', 'album': 'Album subparser',
          'from the "user" section (Defaults to %(default)s)')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
-def cmd_gallery_items(client, args):
+def cmd_items(client, args):
     """View items in the gallery"""
     gallery = client.gallery(args.section, args.sort, args.page, args.window,
                              args.show_viral)
@@ -43,7 +43,7 @@ def cmd_gallery_items(client, args):
          'Pages are regenerated every hour (defaults to %(default)s)')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
-def cmd_gallery_random(client, args):
+def cmd_random(client, args):
     """View a random set of gallery items"""
     gallery_random = client.gallery_random(args.page)
     data = [item.__dict__ for item in gallery_random]
@@ -63,7 +63,7 @@ def cmd_gallery_random(client, args):
          'day | week | month | year | all (Defaults to %(default)s)')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
-def cmd_gallery_tag(client, args):
+def cmd_tag(client, args):
     """View images for a gallery tag"""
     gallery_tag = client.gallery_tag(args.tag, args.sort, args.page, args.window)
     data = gallery_tag.__dict__
@@ -74,7 +74,7 @@ def cmd_gallery_tag(client, args):
 @cli_subparser('gallery')
 @cli_arg('tag', help='The name of the tag')
 @cli_arg('image_id', help='Image ID')
-def cmd_gallery_tag_image(client, args):
+def cmd_tag_image(client, args):
     """View a single image in a gallery tag"""
     gallery_tag_image = client.gallery_tag_image(args.tag, args.image_id)
     data = gallery_tag_image.__dict__
@@ -83,7 +83,7 @@ def cmd_gallery_tag_image(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
-def cmd_gallery_item_tags(client, args):
+def cmd_item_tags(client, args):
     """View tags for a gallery item"""
     gallery_item_tags = client.gallery_item_tags(args.item_id)
     data = [item.__dict__ for item in gallery_item_tags]
@@ -92,7 +92,7 @@ def cmd_gallery_item_tags(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
-def cmd_gallery_item(client, args):
+def cmd_item(client, args):
     """View item in a gallery"""
     gallery_item = client.gallery_item(args.item_id)
     data = gallery_item.__dict__
@@ -101,7 +101,7 @@ def cmd_gallery_item(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
-def cmd_gallery_comment_ids(client, args):
+def cmd_comment_ids(client, args):
     """List all of the IDs for the comments on an image"""
     gallery_comment_ids = client.gallery_comment_ids(args.item_id)
     generate_output({'gallery_comment_ids': gallery_comment_ids})
@@ -109,7 +109,7 @@ def cmd_gallery_comment_ids(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
-def cmd_gallery_comment_count(client, args):
+def cmd_comment_count(client, args):
     """List all of the IDs for the comments on an image"""
     gallery_comment_count = client.gallery_comment_count(args.item_id)
     generate_output({'gallery_comment_count': gallery_comment_count})
@@ -128,7 +128,7 @@ def cmd_album_id(client, args):
 @cli_arg('album_id', help='Album ID')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
-def cmd_album_images(client, args):
+def cmd_images(client, args):
     """Get information about a specific album"""
     album_images = client.get_album_images(args.album_id)
     data = [item.__dict__ for item in album_images]
@@ -137,7 +137,7 @@ def cmd_album_images(client, args):
 
 @cli_subparser('image')
 @cli_arg('image_id', help='Image ID')
-def cmd_image(client, args):
+def cmd_image_id(client, args):
     """Get information about an image"""
     image = client.get_image(args.image_id)
     data = image.__dict__
