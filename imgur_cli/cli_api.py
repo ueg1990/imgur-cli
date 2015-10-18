@@ -198,6 +198,18 @@ def cmd_update(client, args):
 
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
+def cmd_delete_album(client, args):
+    """
+    Delete an album with a given ID. You are required to be logged in as the user
+    to delete the album. For anonymous albums, {album} should be the deletehash
+    that is returned at creation
+    """
+    delete_album = client.album_delete(args.album_id)
+    generate_output({'delete_album': delete_album})
+
+
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
 @cli_arg('ids', help='Comma separated list of image ids that you want to be added '
          'to the album')
 def cmd_set_images(client, args):
@@ -272,7 +284,7 @@ def cmd_upload(client, args):
 
 @cli_subparser('image')
 @cli_arg('image_id', help='Image ID')
-def cmd_delete(client, args):
+def cmd_delete_image(client, args):
     """
     Deletes an image. For an anonymous image, {id} must be the image's deletehash.
     If the image belongs to your account then passing the ID of the image is
