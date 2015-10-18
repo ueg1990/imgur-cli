@@ -111,42 +111,6 @@ class TestImgurCli(testtools.TestCase):
         self.assertTrue(all(getattr(parser_args, key) == value
                             for key, value in expected_args.items()))
 
-    def test_album(self):
-        argv = ['album', 'album-id', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.get_album.called)
-
-    def test_album_images(self):
-        argv = ['album', 'images', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertEqual(parser_args.output_file, None)
-        self.assertTrue(_cli.client.get_album_images.called)
-        self.assertRaises(SystemExit, self.cli,
-                          [argv[0], '--output-file', 'dummy.json'])
-
-    def test_image(self):
-        argv = ['image', 'image-id', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.get_image.called)
-
-    def test_upload_image(self):
-        argv = ['image', 'upload', 'file', 'test.jpg']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.upload_from_path.called)
-        argv[2] = 'url'
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.upload_from_url.called)
-
     def test_gallery_random(self):
         argv = ['gallery', 'random']
         _cli = self.cli(argv)
@@ -208,6 +172,49 @@ class TestImgurCli(testtools.TestCase):
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.gallery_comment_count.called)
+
+    def test_album(self):
+        argv = ['album', 'album-id', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_album.called)
+
+    def test_album_images(self):
+        argv = ['album', 'images', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertEqual(parser_args.output_file, None)
+        self.assertTrue(_cli.client.get_album_images.called)
+        self.assertRaises(SystemExit, self.cli,
+                          [argv[0], '--output-file', 'dummy.json'])
+
+    def test_image(self):
+        argv = ['image', 'image-id', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_image.called)
+
+    def test_upload_image(self):
+        argv = ['image', 'upload', 'file', 'test.jpg']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.upload_from_path.called)
+        argv[2] = 'url'
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.upload_from_url.called)
+
+    def test_delete_image(self):
+        argv = ['image', 'delete', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.delete_image.called)
 
     def test_comment(self):
         argv = ['comment', 'comment-id', '123']
