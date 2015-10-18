@@ -135,6 +135,18 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_image.called)
 
+    def test_upload_image(self):
+        argv = ['image', 'upload', 'file', 'test.jpg']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.upload_from_path.called)
+        argv[2] = 'url'
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.upload_from_url.called)
+
     def test_gallery_random(self):
         argv = ['gallery', 'random']
         _cli = self.cli(argv)

@@ -143,6 +143,7 @@ def cmd_image_id(client, args):
     data = image.__dict__
     generate_output({'image': data})
 
+
 @cli_subparser('image')
 @cli_arg('type', choices=['file', 'url'],
          help='The type of the file that\'s being sent; file, base64 or URL')
@@ -167,7 +168,7 @@ def cmd_upload(client, args):
         output = client.upload_from_path(args.image, config)
     else:
         output = client.upload_from_url(args.image, config)
-    print (output.__dict__)
+    generate_output({'image': output})
 
 
 @cli_subparser('comment')
