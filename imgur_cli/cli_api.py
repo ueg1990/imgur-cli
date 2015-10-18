@@ -196,6 +196,20 @@ def cmd_update(client, args):
     generate_output({'album': album})
 
 
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+@cli_arg('ids', help='Comma separated list of image ids that you want to be added '
+         'to the album')
+def cmd_set_images(client, args):
+    """
+    Sets the images for an album, removes all other images and only uses the images
+    in this request. For anonymous albums, {album} should be the deletehash that
+    is returned at creation
+    """
+    set_images = client.album_set_images(args.album_id, args.ids)
+    generate_output({'set_images': set_images})
+
+
 @cli_subparser('image')
 @cli_arg('image_id', help='Image ID')
 def cmd_image_id(client, args):
