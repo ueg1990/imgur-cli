@@ -171,6 +171,18 @@ def cmd_upload(client, args):
     generate_output({'image': output})
 
 
+@cli_subparser('image')
+@cli_arg('image_id', help='Image ID')
+def cmd_delete(client, args):
+    """
+    Deletes an image. For an anonymous image, {id} must be the image's deletehash.
+    If the image belongs to your account then passing the ID of the image is
+    sufficient
+    """
+    image_to_delete = client.delete_image(args.image_id)
+    generate_output({'deleted': image_to_delete})
+
+
 @cli_subparser('comment')
 @cli_arg('comment_id', help='Comment ID')
 def cmd_comment_id(client, args):
