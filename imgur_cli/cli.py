@@ -71,9 +71,9 @@ class ImgurCli:
         self._find_actions(cli_api)
 
     def _find_subparsers(self, subparser):
-        for name, help in cli_api.SUBPARSERS.items():
-            parser = subparser.add_parser(name, help=help,
-                                          description=help,
+        for name, description in cli_api.SUBPARSERS.items():
+            parser = subparser.add_parser(name, help=description,
+                                          description=description,
                                           add_help=False)
             parser.add_argument('-h', '--help', action='help',
                                 help=argparse.SUPPRESS)

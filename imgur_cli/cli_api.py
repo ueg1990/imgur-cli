@@ -143,6 +143,32 @@ def cmd_image_id(client, args):
     data = image.__dict__
     generate_output({'image': data})
 
+@cli_subparser('image')
+@cli_arg('type', choices=['file', 'url'],
+         help='The type of the file that\'s being sent; file, base64 or URL')
+@cli_arg('image', help='A binary file, base64 data, or a URL for an image '
+                       '(up to 10MB)')
+@cli_arg('--name', metavar='<name>', help='The name of the file, '
+         'this is automatically detected if uploading a file with a POST and '
+         'multipart / form-data')
+@cli_arg('--title', metavar='<title>', help='The title of the image')
+@cli_arg('--album', metavar='<album>',
+         help='The id of the album you want to add the image to')
+@cli_arg('--description', metavar='<description>',
+         help='The description of the image')
+def cmd_upload(client, args):
+    """Upload a new image"""
+    config = {}
+    for field in client.allowed_image_fields:
+        field_value = getattr(args, field, None)
+        if field_value:
+            config[field] = field_value
+    if args.type == 'file':
+        output = client.upload_from_path(args.image, config)
+    else:
+        output = client.upload_from_url(args.image, config)
+    print (output.__dict__)
+
 
 @cli_subparser('comment')
 @cli_arg('comment_id', help='Comment ID')
