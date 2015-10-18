@@ -190,6 +190,17 @@ class TestImgurCli(testtools.TestCase):
         self.assertRaises(SystemExit, self.cli,
                           [argv[0], '--output-file', 'dummy.json'])
 
+    def test_album_create(self):
+        argv = ['album', 'create', '--title', 'test']
+        self._client.return_value.allowed_album_fields = {'ids', 'title',
+                                                          'description', 'privacy',
+                                                          'layout', 'cover'}
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.create_album.called)
+        _cli.client.create_album.assert_called_with({'title': 'test'})
+
     def test_image(self):
         argv = ['image', 'image-id', '123']
         _cli = self.cli(argv)
