@@ -212,6 +212,13 @@ class TestImgurCli(testtools.TestCase):
         self.assertTrue(_cli.client.update_album.called)
         _cli.client.update_album.assert_called_with('123', {'title': 'test'})
 
+    def test_album_set_images(self):
+        argv = ['album', 'set-images', '123', 'abc']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.album_set_images.called)
+
     def test_image(self):
         argv = ['image', 'image-id', '123']
         _cli = self.cli(argv)
