@@ -167,6 +167,35 @@ def cmd_create(client, args):
     generate_output({'album': album})
 
 
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+@cli_arg('--ids', metavar='<ids>', help='Comma separated list of image ids that you '
+         'want to be included in the album; you have to be logged in as the user '
+         'for adding the image ids')
+@cli_arg('--title', metavar='<title>', help='The title of the album')
+@cli_arg('--description', metavar='<description>',
+         help='The description of the album')
+@cli_arg('--privacy', metavar='<privacy>', choices=['public', 'hidden', 'secret'],
+         help="Sets the privacy level of the album."
+              "Values are : public | hidden | secret."
+              "Defaults to user's privacy settings for logged in users")
+@cli_arg('--layout', metavar='<layout>',
+         choices=['blog', 'grid', 'horizontal', 'vertical'],
+         help='Sets the layout to display the album. '
+         'Values are : blog | grid | horizontal | vertical')
+@cli_arg('--cover', metavar='<cover>',
+         help='The ID of an image that you want to be the cover of the album; '
+         'you have to be logged in as the user')
+def cmd_update(client, args):
+    """
+    Update the information of an album. For anonymous albums, {album} should be the
+    deletehash that is returned at creation
+    """
+    fields = data_fields(args, client.allowed_album_fields)
+    album = client.update_album(args.album_id, fields)
+    generate_output({'album': album})
+
+
 @cli_subparser('image')
 @cli_arg('image_id', help='Image ID')
 def cmd_image_id(client, args):
