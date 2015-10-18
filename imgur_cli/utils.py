@@ -35,9 +35,20 @@ def add_subparser(func, *args, **kwargs):
 
 
 def generate_output(result, output_filename=None):
+    """Generate JSON output and either print it to console or save to a file"""
     if output_filename:
         with open(output_filename, 'w') as json_file:
             data = json.dumps(result, json_file, indent=4, separators=(',', ': '))
             json_file.write(data)
     else:
         print(json.dumps(result, indent=4, separators=(',', ': ')))
+
+
+def data_fields(args, allowed_fields):
+    """Generate data fields dictionary required by some client methods"""
+    data = {}
+    for field in allowed_fields:
+        field_value = getattr(args, field, None)
+        if field_value:
+            data[field] = field_value
+    return data
