@@ -224,6 +224,20 @@ def cmd_add_images(client, args):
     generate_output({'add_images': add_images})
 
 
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+@cli_arg('ids', help='Comma separated list of image ids that you want to be removed '
+         'to the album')
+def cmd_remove_images(client, args):
+    """
+    Remove images for an album from a given comma separated list of image ids.
+    For anonymous albums, {album} should be the deletehash that is returned
+    at creation
+    """
+    remove_images = client.album_remove_images(args.album_id, args.ids)
+    generate_output({'remove_images': remove_images})
+
+
 @cli_subparser('image')
 @cli_arg('image_id', help='Image ID')
 def cmd_image_id(client, args):
