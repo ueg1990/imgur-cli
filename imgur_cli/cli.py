@@ -66,11 +66,26 @@ class ImgurCli:
     def generate_parser(self):
         self.parser = self.base_parser
         base_subparser = self.parser.add_subparsers(metavar='<subparsers>')
-        self._find_actions(self, base_subparser)
-        self._find_subparsers(base_subparser)
-        self._find_actions(cli_api)
+        self._add_help(self, base_subparser)
+        self._add_subparsers(base_subparser)
+        self._add_subcommands(cli_api)
 
-    def _find_subparsers(self, subparser):
+    def _add_help(self, cli_api, subparser):
+        callback = getattr(self, 'cmd_help')
+        description = callback.__doc__ or ''
+        action_help = description.strip()
+        arguments = getattr(callback, 'arguments', [])
+        subcommand = subparser.add_parser('help', help=action_help,
+                                          description=description,
+                                          add_help=False)
+        subcommand.add_argument('-h', '--help', action='help',
+                                help=argparse.SUPPRESS)
+        for args, kwargs in arguments:
+            subcommand.add_argument(*args, **kwargs)
+        subcommand.set_defaults(func=callback)
+        self.subcommands['help'] = subcommand
+
+    def _add_subparsers(self, subparser):
         for name, description in cli_api.SUBPARSERS.items():
             parser = subparser.add_parser(name, help=description,
                                           description=description,
@@ -83,16 +98,15 @@ class ImgurCli:
                 parser.add_subparsers(metavar='<subcommands>')
             )
 
-    def _find_actions(self, actions_module, subparsers=None):
-        for attr in (action for action in dir(actions_module)
+    def _add_subcommands(self, cli_api):
+        for attr in (action for action in dir(cli_api)
                      if action.startswith('cmd_')):
-            name = attr[4:].replace('_', '-')
-            callback = getattr(actions_module, attr)
+            callback = getattr(cli_api, attr)
             description = callback.__doc__ or ''
             action_help = description.strip()
             subparser_name = getattr(callback, 'subparser', None)
-            subparser = (self.subparsers[subparser_name]['subparser']
-                         if subparser_name else subparsers)
+            subparser = self.subparsers[subparser_name]['subparser']
+            name = '-'.join(attr.split('_')[2:])
             arguments = getattr(callback, 'arguments', [])
             subcommand = subparser.add_parser(name, help=action_help,
                                               description=description,
