@@ -29,7 +29,7 @@ SUBPARSERS = {'gallery': 'Gallery subparser', 'album': 'Album subparser',
          'from the "user" section (Defaults to %(default)s)')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
-def cmd_items(client, args):
+def cmd_gallery_items(client, args):
     """View items in the gallery"""
     gallery = client.gallery(args.section, args.sort, args.page, args.window,
                              args.show_viral)
@@ -43,7 +43,7 @@ def cmd_items(client, args):
          'Pages are regenerated every hour (defaults to %(default)s)')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
-def cmd_random(client, args):
+def cmd_gallery_random(client, args):
     """View a random set of gallery items"""
     gallery_random = client.gallery_random(args.page)
     data = [item.__dict__ for item in gallery_random]
@@ -63,7 +63,7 @@ def cmd_random(client, args):
          'day | week | month | year | all (Defaults to %(default)s)')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
-def cmd_tag(client, args):
+def cmd_gallery_tag(client, args):
     """View images for a gallery tag"""
     gallery_tag = client.gallery_tag(args.tag, args.sort, args.page, args.window)
     data = gallery_tag.__dict__
@@ -74,7 +74,7 @@ def cmd_tag(client, args):
 @cli_subparser('gallery')
 @cli_arg('tag', help='The name of the tag')
 @cli_arg('image_id', help='Image ID')
-def cmd_tag_image(client, args):
+def cmd_gallery_tag_image(client, args):
     """View a single image in a gallery tag"""
     gallery_tag_image = client.gallery_tag_image(args.tag, args.image_id)
     data = gallery_tag_image.__dict__
@@ -83,7 +83,7 @@ def cmd_tag_image(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
-def cmd_item_tags(client, args):
+def cmd_gallery_item_tags(client, args):
     """View tags for a gallery item"""
     gallery_item_tags = client.gallery_item_tags(args.item_id)
     data = [item.__dict__ for item in gallery_item_tags]
@@ -92,7 +92,7 @@ def cmd_item_tags(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
-def cmd_item(client, args):
+def cmd_gallery_item(client, args):
     """View item in a gallery"""
     gallery_item = client.gallery_item(args.item_id)
     data = gallery_item.__dict__
@@ -101,7 +101,7 @@ def cmd_item(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
-def cmd_comment_ids(client, args):
+def cmd_gallery_comment_ids(client, args):
     """List all of the IDs for the comments on an image"""
     gallery_comment_ids = client.gallery_comment_ids(args.item_id)
     generate_output({'gallery_comment_ids': gallery_comment_ids})
@@ -109,7 +109,7 @@ def cmd_comment_ids(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
-def cmd_comment_count(client, args):
+def cmd_gallery_comment_count(client, args):
     """List all of the IDs for the comments on an image"""
     gallery_comment_count = client.gallery_comment_count(args.item_id)
     generate_output({'gallery_comment_count': gallery_comment_count})
@@ -128,7 +128,7 @@ def cmd_album_id(client, args):
 @cli_arg('album_id', help='Album ID')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
-def cmd_images(client, args):
+def cmd_album_images(client, args):
     """Return all of the images in the album"""
     album_images = client.get_album_images(args.album_id)
     data = [item.__dict__ for item in album_images]
@@ -153,7 +153,7 @@ def cmd_images(client, args):
 @cli_arg('--cover', metavar='<cover>',
          help='The ID of an image that you want to be the cover of the album; '
          'you have to be logged in as the user')
-def cmd_create(client, args):
+def cmd_album_create(client, args):
     """
     Create a new album. Optional parameter of ids is an array of image ids to
     add to the album; you have to be logged in as the user for adding the image ids.
@@ -186,7 +186,7 @@ def cmd_create(client, args):
 @cli_arg('--cover', metavar='<cover>',
          help='The ID of an image that you want to be the cover of the album; '
          'you have to be logged in as the user')
-def cmd_update(client, args):
+def cmd_album_update(client, args):
     """
     Update the information of an album. For anonymous albums, {album} should be the
     deletehash that is returned at creation
@@ -198,7 +198,7 @@ def cmd_update(client, args):
 
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
-def cmd_delete_album(client, args):
+def cmd_album_delete(client, args):
     """
     Delete an album with a given ID. You are required to be logged in as the user
     to delete the album. For anonymous albums, {album} should be the deletehash
@@ -212,7 +212,7 @@ def cmd_delete_album(client, args):
 @cli_arg('album_id', help='Album ID')
 @cli_arg('ids', help='Comma separated list of image ids that you want to be added '
          'to the album')
-def cmd_set_images(client, args):
+def cmd_album_set_images(client, args):
     """
     Sets the images for an album, removes all other images and only uses the images
     in this request. For anonymous albums, {album} should be the deletehash that
@@ -226,7 +226,7 @@ def cmd_set_images(client, args):
 @cli_arg('album_id', help='Album ID')
 @cli_arg('ids', help='Comma separated list of image ids that you want to be added '
          'to the album')
-def cmd_add_images(client, args):
+def cmd_album_add_images(client, args):
     """
     Add images for an album from a given comma separated list of image ids.
     For anonymous albums, {album} should be the deletehash that is returned
@@ -240,7 +240,7 @@ def cmd_add_images(client, args):
 @cli_arg('album_id', help='Album ID')
 @cli_arg('ids', help='Comma separated list of image ids that you want to be removed '
          'to the album')
-def cmd_remove_images(client, args):
+def cmd_album_remove_images(client, args):
     """
     Remove images for an album from a given comma separated list of image ids.
     For anonymous albums, {album} should be the deletehash that is returned
@@ -272,7 +272,7 @@ def cmd_image_id(client, args):
          help='The id of the album you want to add the image to')
 @cli_arg('--description', metavar='<description>',
          help='The description of the image')
-def cmd_upload(client, args):
+def cmd_image_upload(client, args):
     """Upload a new image"""
     config = data_fields(args, client.allowed_image_fields)
     if args.type == 'file':
@@ -284,7 +284,7 @@ def cmd_upload(client, args):
 
 @cli_subparser('image')
 @cli_arg('image_id', help='Image ID')
-def cmd_delete_image(client, args):
+def cmd_image_delete(client, args):
     """
     Deletes an image. For an anonymous image, {id} must be the image's deletehash.
     If the image belongs to your account then passing the ID of the image is
