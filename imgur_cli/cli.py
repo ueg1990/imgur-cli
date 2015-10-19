@@ -58,9 +58,6 @@ class ImgurCli:
         parser.add_argument('-v', '--version', action='version',
                             version='%(prog)s {0}'.format(__version__))
 
-        parser.add_argument('--debug', default=False, action='store_true',
-                            help='Print debugging output')
-
         return parser
 
     def generate_parser(self):
@@ -70,12 +67,11 @@ class ImgurCli:
         self._add_subparsers(base_subparser)
         self._add_subcommands(cli_api)
 
-    def _add_help(self, cli_api, subparser):
-        callback = getattr(self, 'cmd_help')
+    def _generate_subcommand(self, name, callback, subparser):
         description = callback.__doc__ or ''
         action_help = description.strip()
         arguments = getattr(callback, 'arguments', [])
-        subcommand = subparser.add_parser('help', help=action_help,
+        subcommand = subparser.add_parser(name, help=action_help,
                                           description=description,
                                           add_help=False)
         subcommand.add_argument('-h', '--help', action='help',
@@ -83,7 +79,11 @@ class ImgurCli:
         for args, kwargs in arguments:
             subcommand.add_argument(*args, **kwargs)
         subcommand.set_defaults(func=callback)
-        self.subcommands['help'] = subcommand
+        self.subcommands[name] = subcommand
+
+    def _add_help(self, cli_api, subparser):
+        callback = getattr(self, 'cmd_help')
+        self._generate_subcommand('help', callback, subparser)
 
     def _add_subparsers(self, subparser):
         for name, description in cli_api.SUBPARSERS.items():
@@ -101,22 +101,11 @@ class ImgurCli:
     def _add_subcommands(self, cli_api):
         for attr in (action for action in dir(cli_api)
                      if action.startswith('cmd_')):
+            name = '-'.join(attr.split('_')[2:])
             callback = getattr(cli_api, attr)
-            description = callback.__doc__ or ''
-            action_help = description.strip()
             subparser_name = getattr(callback, 'subparser', None)
             subparser = self.subparsers[subparser_name]['subparser']
-            name = '-'.join(attr.split('_')[2:])
-            arguments = getattr(callback, 'arguments', [])
-            subcommand = subparser.add_parser(name, help=action_help,
-                                              description=description,
-                                              add_help=False)
-            subcommand.add_argument('-h', '--help', action='help',
-                                    help=argparse.SUPPRESS)
-            for args, kwargs in arguments:
-                subcommand.add_argument(*args, **kwargs)
-            subcommand.set_defaults(func=callback)
-            self.subcommands[name] = subcommand
+            self._generate_subcommand(name, callback, subparser)
 
     @cli_arg('subparser', metavar='<subparser>', nargs='?',
              help='Display help for <subparser>')
