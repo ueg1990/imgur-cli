@@ -52,7 +52,7 @@ class TestImgurCli(testtools.TestCase):
         followed by the subcommand and the remaining items are positional arguments
         """
         number_of_parsing_levels = 2
-        cmd = 'cmd_' + argv[1].replace('-', '_')
+        cmd = 'cmd_{0}_{1}'.format(argv[0], argv[1].replace('-', '_'))
         self.assertEqual(parser_args.func.__name__, cmd)
         self.assertTrue(argv[1] in _cli.subcommands)
         self.assertTrue(argv[0] in _cli.subparsers)
@@ -174,7 +174,7 @@ class TestImgurCli(testtools.TestCase):
         self.assertTrue(_cli.client.gallery_comment_count.called)
 
     def test_album(self):
-        argv = ['album', 'album-id', '123']
+        argv = ['album', 'id', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
@@ -213,7 +213,7 @@ class TestImgurCli(testtools.TestCase):
         _cli.client.update_album.assert_called_with('123', {'title': 'test'})
 
     def test_album_delete(self):
-        argv = ['album', 'delete-album', '123']
+        argv = ['album', 'delete', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
@@ -241,7 +241,7 @@ class TestImgurCli(testtools.TestCase):
         self.assertTrue(_cli.client.album_remove_images.called)
 
     def test_image(self):
-        argv = ['image', 'image-id', '123']
+        argv = ['image', 'id', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
@@ -260,14 +260,14 @@ class TestImgurCli(testtools.TestCase):
         self.assertTrue(_cli.client.upload_from_url.called)
 
     def test_delete_image(self):
-        argv = ['image', 'delete-image', '123']
+        argv = ['image', 'delete', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.delete_image.called)
 
     def test_comment(self):
-        argv = ['comment', 'comment-id', '123']
+        argv = ['comment', 'id', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)

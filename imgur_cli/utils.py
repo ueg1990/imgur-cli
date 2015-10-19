@@ -29,7 +29,7 @@ def cli_subparser(*args, **kwargs):
 
 
 def add_subparser(func, *args, **kwargs):
-    """Bind CLI subparsers to a 'subparser_' format function"""
+    """Bind a subparser to a 'cmd_' format function"""
     if not hasattr(func, 'subparser'):
         func.subparser = args[0]
 
