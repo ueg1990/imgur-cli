@@ -273,6 +273,13 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.delete_image.called)
 
+    def test_image_favorite(self):
+        argv = ['image', 'favorite', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.favorite_image.called)
+
     def test_comment(self):
         argv = ['comment', 'id', '123']
         _cli = self.cli(argv)
