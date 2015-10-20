@@ -207,6 +207,7 @@ def cmd_album_delete(client, args):
     delete_album = client.album_delete(args.album_id)
     generate_output({'delete_album': delete_album})
 
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_favorite(client, args):
@@ -302,6 +303,14 @@ def cmd_image_delete(client, args):
     """
     image_to_delete = client.delete_image(args.image_id)
     generate_output({'deleted': image_to_delete})
+
+
+@cli_subparser('image')
+@cli_arg('image_id', help='Image ID')
+def cmd_image_favorite(client, args):
+    """Get information about an image"""
+    favorite_image = client.favorite_image(args.image_id)
+    generate_output({'favorite_image': favorite_image})
 
 
 @cli_subparser('comment')
