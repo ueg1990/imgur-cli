@@ -136,6 +136,14 @@ def cmd_album_images(client, args):
 
 
 @cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+@cli_arg('image_id', help='Image ID')
+def cmd_album_image(client, args):
+    """Get information about an image in an album"""
+    pass
+
+
+@cli_subparser('album')
 @cli_arg('--ids', metavar='<ids>', help='Comma separated list of image ids that you '
          'want to be included in the album; you have to be logged in as the user '
          'for adding the image ids')
@@ -306,9 +314,24 @@ def cmd_image_delete(client, args):
 
 
 @cli_subparser('image')
+@cli_arg('--title', metavar='<title>', help='The title of the album')
+@cli_arg('--description', metavar='<description>')
+def cmd_image_update(client, args):
+    """
+    Updates the title or description of an image. You can only update an image
+    you own and is associated with your account. For an anonymous image,
+    {id} must be the image's deletehash
+    """
+    pass
+
+
+@cli_subparser('image')
 @cli_arg('image_id', help='Image ID')
 def cmd_image_favorite(client, args):
-    """Get information about an image"""
+    """
+    Favorite an image with a given ID. The user is required to be logged in to
+    favorite the image
+    """
     favorite_image = client.favorite_image(args.image_id)
     generate_output({'favorite_image': favorite_image})
 
