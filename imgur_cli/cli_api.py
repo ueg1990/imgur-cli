@@ -207,6 +207,16 @@ def cmd_album_delete(client, args):
     delete_album = client.album_delete(args.album_id)
     generate_output({'delete_album': delete_album})
 
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+def cmd_album_favorite(client, args):
+    """
+    Favorite an album with a given ID. The user is required to be logged in to
+    favorite the album
+    """
+    favorite_album = client.album_favorite(args.album_id)
+    generate_output({'favorite_album': favorite_album})
+
 
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
