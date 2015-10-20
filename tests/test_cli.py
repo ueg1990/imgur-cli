@@ -219,6 +219,13 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.album_delete.called)
 
+    def test_album_favorite(self):
+        argv = ['album', 'favorite', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.album_favorite.called)
+
     def test_album_set_images(self):
         argv = ['album', 'set-images', '123', 'abc']
         _cli = self.cli(argv)
