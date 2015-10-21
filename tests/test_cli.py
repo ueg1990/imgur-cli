@@ -1,4 +1,3 @@
-import argparse
 import sys
 
 import fixtures
@@ -151,6 +150,15 @@ class TestImgurCli(testtools.TestCase):
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.gallery_item_tags.called)
+
+    def test_gallery_tag_vote(self):
+        argv = ['gallery', 'tag-vote', '123', 'funny', 'up']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery_tag_vote.called)
+        argv[-1] = 'left'
+        self.assertRaises(SystemExit, self.cli, argv)
 
     def test_gallery_item(self):
         argv = ['gallery', 'item', '123']
