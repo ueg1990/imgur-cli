@@ -104,6 +104,19 @@ def cmd_gallery_random(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
+@cli_arg('title', help='The title of the image')
+@cli_arg('--terms', default=0, type=int, metavar='<terms>',
+         help='If the user has not accepted our terms yet, this endpoint will '
+         'return an error. To by-pass the terms in general simply set this '
+         'value to 1')
+def cmd_gallery_publish(client, args):
+    """Share an Album or Image to the Imgur Gallery"""
+    publish_to_imgur = client.share_on_imgur(args.item_id, args.title, args.terms)
+    generate_output({'publish_to_imgur': publish_to_imgur})
+
+
+@cli_subparser('gallery')
+@cli_arg('item_id', help='Gallery item ID')
 def cmd_gallery_remove(client, args):
     """
     Remove an item from the gallery. You must be logged in as the owner of the

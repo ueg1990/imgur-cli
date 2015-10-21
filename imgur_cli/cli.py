@@ -152,6 +152,9 @@ def main():
     try:
         imgur_cli = ImgurCli()
         imgur_cli.main(sys.argv[1:])
+    except imgurpython.client.ImgurClientError as e:
+        print(e, file=sys.stderr)
+        sys.exit(1)
     except Exception as e:
         print(traceback.format_exc())
         sys.exit(1)
