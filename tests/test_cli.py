@@ -110,21 +110,6 @@ class TestImgurCli(testtools.TestCase):
         self.assertTrue(all(getattr(parser_args, key) == value
                             for key, value in expected_args.items()))
 
-    def test_gallery_random(self):
-        argv = ['gallery', 'random']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.gallery_random.called)
-        self.assertEqual(parser_args.page, 0)
-        self.assertEqual(parser_args.output_file, None)
-        argv.extend(['--page', '12', '--output-file', 'dummy.json'])
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertEqual(parser_args.page, int(argv[3]))
-        self.assertEqual(parser_args.output_file, argv[5])
-        self.assertTrue(isinstance(parser_args.page, int))
-
     def test_gallery_tag(self):
         argv = ['gallery', 'tag', 'dogs']
         self._client.return_value.gallery_tag.return_value = mock.Mock(items=[])
@@ -159,6 +144,28 @@ class TestImgurCli(testtools.TestCase):
         self.assertTrue(_cli.client.gallery_tag_vote.called)
         argv[-1] = 'left'
         self.assertRaises(SystemExit, self.cli, argv)
+
+    def test_gallery_random(self):
+        argv = ['gallery', 'random']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery_random.called)
+        self.assertEqual(parser_args.page, 0)
+        self.assertEqual(parser_args.output_file, None)
+        argv.extend(['--page', '12', '--output-file', 'dummy.json'])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertEqual(parser_args.page, int(argv[3]))
+        self.assertEqual(parser_args.output_file, argv[5])
+        self.assertTrue(isinstance(parser_args.page, int))
+
+    def test_gallery_remove(self):
+        argv = ['gallery', 'remove', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.remove_from_gallery.called)
 
     def test_gallery_item(self):
         argv = ['gallery', 'item', '123']
