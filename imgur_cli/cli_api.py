@@ -38,19 +38,6 @@ def cmd_gallery_items(client, args):
 
 
 @cli_subparser('gallery')
-@cli_arg('--page', default=0, metavar='<page>', type=int,
-         help='A page of random gallery images, from 0-50. '
-         'Pages are regenerated every hour (defaults to %(default)s)')
-@cli_arg('--output-file', default=None, metavar='<output_file>',
-         help='Save output to a JSON file')
-def cmd_gallery_random(client, args):
-    """View a random set of gallery items"""
-    gallery_random = client.gallery_random(args.page)
-    data = [item.__dict__ for item in gallery_random]
-    generate_output({'gallery_random': data}, args.output_file)
-
-
-@cli_subparser('gallery')
 @cli_arg('tag', help='The name of the tag')
 @cli_arg('--sort', default='viral', metavar='<sort>',
          choices=['viral', 'top', 'time'],
@@ -100,6 +87,30 @@ def cmd_gallery_tag_vote(client, args):
     """
     gallery_tag_vote = client.gallery_tag_vote(args.item_id, args.tag, args.vote)
     generate_output({'gallery_tag_vote': gallery_tag_vote})
+
+
+@cli_subparser('gallery')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='A page of random gallery images, from 0-50. '
+         'Pages are regenerated every hour (defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_gallery_random(client, args):
+    """View a random set of gallery items"""
+    gallery_random = client.gallery_random(args.page)
+    data = [item.__dict__ for item in gallery_random]
+    generate_output({'gallery_random': data}, args.output_file)
+
+
+@cli_subparser('gallery')
+@cli_arg('item_id', help='Gallery item ID')
+def cmd_gallery_remove(client, args):
+    """
+    Remove an item from the gallery. You must be logged in as the owner of the
+    item to do this action
+    """
+    gallery_remove = client.remove_from_gallery(args.item_id)
+    generate_output({'gallery_remove': gallery_remove})
 
 
 @cli_subparser('gallery')
