@@ -92,6 +92,18 @@ def cmd_gallery_item_tags(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
+@cli_arg('tag', help='The name of the tag')
+@cli_arg('vote', choices=['up', 'down'], help="'up' or 'down'")
+def cmd_gallery_tag_vote(client, args):
+    """
+    Vote for a tag, 'up' or 'down' vote. Send the same value again to undo a vote
+    """
+    gallery_tag_vote = client.gallery_tag_vote(args.item_id, args.tag, args.vote)
+    generate_output({'gallery_tag_vote': gallery_tag_vote})
+
+
+@cli_subparser('gallery')
+@cli_arg('item_id', help='Gallery item ID')
 def cmd_gallery_item(client, args):
     """View item in a gallery"""
     gallery_item = client.gallery_item(args.item_id)
@@ -140,8 +152,9 @@ def cmd_album_images(client, args):
 @cli_arg('image_id', help='Image ID')
 def cmd_album_image(client, args):
     """
-    Get information about an image in an album - 
-    Not implemented yet in imgurpython"""
+    Get information about an image in an album -
+    Not implemented yet in imgurpython
+    """
     raise exceptions.CommandError('Not implemented yet in imgurpython')
 
 
