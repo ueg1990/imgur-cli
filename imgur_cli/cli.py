@@ -5,6 +5,7 @@ Imgur CLI
 import argparse
 import logging
 import os
+import traceback
 import sys
 
 from collections import namedtuple
@@ -152,7 +153,7 @@ def main():
         imgur_cli = ImgurCli()
         imgur_cli.main(sys.argv[1:])
     except Exception as e:
-        print(e, file=sys.stderr)
+        print(traceback.format_exc())
         sys.exit(1)
 
 if __name__ == '__main__':
