@@ -160,6 +160,13 @@ class TestImgurCli(testtools.TestCase):
         self.assertEqual(parser_args.output_file, argv[5])
         self.assertTrue(isinstance(parser_args.page, int))
 
+    def test_gallery_publish(self):
+        argv = ['gallery', 'publish', '123', 'Title']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.share_on_imgur.called)
+
     def test_gallery_remove(self):
         argv = ['gallery', 'remove', '123']
         _cli = self.cli(argv)
