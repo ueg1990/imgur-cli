@@ -139,8 +139,10 @@ def cmd_album_images(client, args):
 @cli_arg('album_id', help='Album ID')
 @cli_arg('image_id', help='Image ID')
 def cmd_album_image(client, args):
-    """Get information about an image in an album"""
-    pass
+    """
+    Get information about an image in an album - 
+    Not implemented yet in imgurpython"""
+    raise exceptions.CommandError('Not implemented yet in imgurpython')
 
 
 @cli_subparser('album')
@@ -320,9 +322,9 @@ def cmd_image_update(client, args):
     """
     Updates the title or description of an image. You can only update an image
     you own and is associated with your account. For an anonymous image,
-    {id} must be the image's deletehash
+    {id} must be the image's deletehash -  Not implemented yet in imgurpython
     """
-    pass
+    raise exceptions.CommandError('Not implemented yet in imgurpython')
 
 
 @cli_subparser('image')
