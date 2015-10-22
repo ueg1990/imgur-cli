@@ -181,6 +181,13 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.gallery_item .called)
 
+    def test_gallery_report(self):
+        argv = ['gallery', 'report', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.report_gallery_item .called)
+
     def test_gallery_comment_ids(self):
         argv = ['gallery', 'comment-ids', '123']
         _cli = self.cli(argv)
