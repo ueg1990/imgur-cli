@@ -1,7 +1,8 @@
 import imgurpython
 
 from imgur_cli import exceptions
-from imgur_cli.utils import cli_arg
+from imgur_cli.utils import (cli_arg, cli_subparser, data_fields, generate_output,
+                             format_comment_tree)
 from imgur_cli.utils import cli_subparser
 from imgur_cli.utils import data_fields
 from imgur_cli.utils import generate_output
@@ -145,13 +146,27 @@ def cmd_gallery_report(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
-@cli_arg('--vote', default='up', choices=['up', 'down'], help="'up' or 'down'")
+@cli_arg('--vote', default='up', metavar='<vote>', choices=['up', 'down'],
+         help="'up' or 'down'")
 def cmd_gallery_item_vote(client, args):
     """
     Vote for an image, 'up' or 'down' vote. Send the same value again to undo a vote
     """
     gallery_item_vote = client.gallery_item_vote(args.item_id, args.vote)
     generate_output({'gallery_item_vote': gallery_item_vote})
+
+
+@cli_subparser('gallery')
+@cli_arg('item_id', help='Gallery item ID')
+@cli_arg('--sort', default='best', metavar='<sort>', choices=['best', 'top', 'new'],
+         help='best | top | new - defaults to %(default)s')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_gallery_comments(client, args):
+    """Get comments on an item in the gallery"""
+    gallery_comments = client.gallery_item_comments(args.item_id, args.sort)
+    data = format_comment_tree(gallery_comments)
+    generate_output({'gallery_comments': data}, args.output_file)
 
 
 @cli_subparser('gallery')
