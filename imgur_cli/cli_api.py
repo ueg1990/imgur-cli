@@ -137,6 +137,14 @@ def cmd_gallery_item(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
+def cmd_gallery_report(client, args):
+    """Report an item in the gallery"""
+    report_gallery_item = client.report_gallery_item(args.item_id)
+    generate_output({'report_gallery_item': report_gallery_item})
+
+
+@cli_subparser('gallery')
+@cli_arg('item_id', help='Gallery item ID')
 def cmd_gallery_comment_ids(client, args):
     """List all of the IDs for the comments on an image"""
     gallery_comment_ids = client.gallery_comment_ids(args.item_id)
