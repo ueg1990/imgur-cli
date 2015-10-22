@@ -145,6 +145,17 @@ def cmd_gallery_report(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
+@cli_arg('--vote', default='up', choices=['up', 'down'], help="'up' or 'down'")
+def cmd_gallery_item_vote(client, args):
+    """
+    Vote for an image, 'up' or 'down' vote. Send the same value again to undo a vote
+    """
+    gallery_item_vote = client.gallery_item_vote(args.item_id, args.vote)
+    generate_output({'gallery_item_vote': gallery_item_vote})
+
+
+@cli_subparser('gallery')
+@cli_arg('item_id', help='Gallery item ID')
 def cmd_gallery_comment_ids(client, args):
     """List all of the IDs for the comments on an image"""
     gallery_comment_ids = client.gallery_comment_ids(args.item_id)
