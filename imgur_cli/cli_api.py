@@ -150,7 +150,8 @@ def cmd_gallery_report(client, args):
          help="'up' or 'down'")
 def cmd_gallery_item_vote(client, args):
     """
-    Vote for an image, 'up' or 'down' vote. Send the same value again to undo a vote
+    Vote for an item in the gallery, 'up' or 'down' vote. Send the same value
+    again to undo a vote
     """
     gallery_item_vote = client.gallery_item_vote(args.item_id, args.vote)
     generate_output({'gallery_item_vote': gallery_item_vote})
@@ -171,8 +172,16 @@ def cmd_gallery_comments(client, args):
 
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
+@cli_arg('comment', help='The text of the comment')
+def cmd_gallery_create_comment(client, args):
+    create_comment = client.gallery_comment(args.item_id, args.comment)
+    generate_output({'create_comment': create_comment})
+
+
+@cli_subparser('gallery')
+@cli_arg('item_id', help='Gallery item ID')
 def cmd_gallery_comment_ids(client, args):
-    """List all of the IDs for the comments on an image"""
+    """List all of the IDs for the comments on an item in the gallery"""
     gallery_comment_ids = client.gallery_comment_ids(args.item_id)
     generate_output({'gallery_comment_ids': gallery_comment_ids})
 
@@ -180,7 +189,7 @@ def cmd_gallery_comment_ids(client, args):
 @cli_subparser('gallery')
 @cli_arg('item_id', help='Gallery item ID')
 def cmd_gallery_comment_count(client, args):
-    """List all of the IDs for the comments on an image"""
+    """The number of comments on an item in the gallery"""
     gallery_comment_count = client.gallery_comment_count(args.item_id)
     generate_output({'gallery_comment_count': gallery_comment_count})
 
