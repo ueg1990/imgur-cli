@@ -9,7 +9,8 @@ from imgur_cli.utils import generate_output
 
 
 SUBPARSERS = {'gallery': 'Gallery subparser', 'album': 'Album subparser',
-              'image': 'Image subparser', 'comment': 'Comment subparser'}
+              'image': 'Image subparser', 'comment': 'Comment subparser',
+              'memegen': 'Memegen subparser'}
 
 
 @cli_subparser('gallery')
@@ -429,3 +430,13 @@ def cmd_comment_id(client, args):
     except ValueError:
         raise exceptions.CommandError('Given comment id is a string; '
                                       'expecting a number')
+
+
+@cli_subparser('memegen')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_memegen_default_memes(client, args):
+    """Get the list of default memes"""
+    default_memes = client.default_memes()
+    data = [item.__dict__ for item in default_memes]
+    generate_output({'default_memes': args.output_file})
