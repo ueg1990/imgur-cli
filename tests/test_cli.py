@@ -186,7 +186,21 @@ class TestImgurCli(testtools.TestCase):
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.report_gallery_item .called)
+        self.assertTrue(_cli.client.report_gallery_item.called)
+
+    def test_gallery_item_vote(self):
+        argv = ['gallery', 'item-vote', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.gallery_item_vote.called)
+        self.assertEqual(parser_args.vote, 'up')
+        argv.extend(['--vote', 'down'])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertEqual(parser_args.vote, 'down')
+        argv[-1] = 'left'
+        self.assertRaises(SystemExit, self.cli, argv)
 
     def test_gallery_comment_ids(self):
         argv = ['gallery', 'comment-ids', '123']
