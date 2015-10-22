@@ -346,3 +346,10 @@ class TestImgurCli(testtools.TestCase):
         self.assertTrue(_cli.client.get_comment.called)
         argv[2] = 'abc'
         self.assertRaises(exceptions.CommandError, self.cli, argv)
+
+    def test_memegen_default_memes(self):
+        argv = ['memegen', 'default-memes']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.default_memes.called)
