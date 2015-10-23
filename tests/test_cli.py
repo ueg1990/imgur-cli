@@ -358,6 +358,13 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_conversation.called)
 
+    def test_conversation_create_message(self):
+        argv = ['conversation', 'create-message', 'ue90', 'Test message']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.create_message.called)
+
     def test_comment_id(self):
         argv = ['comment', 'id', '123']
         _cli = self.cli(argv)
