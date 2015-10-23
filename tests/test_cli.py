@@ -403,6 +403,13 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_notification.called)
 
+    def test_notification_mark(self):
+        argv = ['notification', 'mark', '1,2,3']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.mark_notifications_as_read.called)
+
     def test_comment_id(self):
         argv = ['comment', 'id', '123']
         _cli = self.cli(argv)

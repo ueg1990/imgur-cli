@@ -497,7 +497,7 @@ def cmd_notification_id(client, args):
 
 @cli_subparser('notification')
 @cli_arg('ids', help='Comma separated list of notification ids to mark as viewed')
-def cmd_notification_viewed(client, args):
+def cmd_notification_mark(client, args):
     """
     Marks a notification  or multiple notifications as viewed, this way it no
     longer shows up in the basic notification request
