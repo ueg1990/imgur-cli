@@ -495,6 +495,21 @@ def cmd_notification_id(client, args):
     generate_output({'notification': notification})
 
 
+@cli_subparser('notification')
+@cli_arg('ids', help='Comma separated list of notification ids to mark as viewed')
+def cmd_notification_viewed(client, args):
+    """
+    Marks a notification  or multiple notifications as viewed, this way it no
+    longer shows up in the basic notification request
+    """
+    # Converted to list because in current implemented in imgurpython, client method
+    # expected a comma separated list of ids
+    ids = args.ids.split(',')
+    notifications_marked_as_viewed = client.mark_notifications_as_read(args.ids)
+    generate_output({'notifications_marked_as_viewed':
+                     notifications_marked_as_viewed})
+
+
 @cli_subparser('comment')
 @cli_arg('comment_id', type=int, help='Comment ID')
 def cmd_comment_id(client, args):
