@@ -379,7 +379,12 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.report_sender.called)
 
-    
+    def test_conversation_block(self):
+        argv = ['conversation', 'block', 'ue90']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.block_sender.called)
 
     def test_comment_id(self):
         argv = ['comment', 'id', '123']
