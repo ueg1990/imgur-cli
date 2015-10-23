@@ -449,10 +449,18 @@ def cmd_conversation_delete(client, args):
 
 @cli_subparser('conversation')
 @cli_arg('username', help='Username of sender to report')
-def cmd_conversation_report_sender(client, args):
+def cmd_conversation_report(client, args):
     """Report a user for sending messages that are against the Terms of Service"""
     report_sender = client.report_sender(args.username)
     generate_output({'report_sender': report_sender})
+
+
+@cli_subparser('conversation')
+@cli_arg('username', help='Username of sender to block')
+def cmd_conversation_block(client, args):
+    """Block the user from sending messages to the user that is logged in"""
+    block_sender = client.block_sender(args.username)
+    generate_output({'block_sender': block_sender})
 
 
 @cli_subparser('comment')
