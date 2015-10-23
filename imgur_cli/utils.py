@@ -55,7 +55,7 @@ def data_fields(args, allowed_fields):
 
 
 def format_comment_tree(comments):
-    if ininstance(comments, list):
+    if isinstance(comments, list):
         result = []
         for comment in comments:
             comment_dict = comment.__dict__

@@ -280,7 +280,8 @@ class TestImgurCli(testtools.TestCase):
         argv[-1] = 'left'
         self.assertRaises(SystemExit, self.cli, argv)
 
-    def test_gallery_comments(self):
+    @mock.patch('imgur_cli.cli_api.format_comment_tree')
+    def test_gallery_comments(self, mock_format_comment_tree):
         argv = ['gallery', 'comments', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
@@ -385,6 +386,13 @@ class TestImgurCli(testtools.TestCase):
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.block_sender.called)
+
+    def test_notification_all(self):
+        argv = ['notification', 'all']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_notifications.called)
 
     def test_comment_id(self):
         argv = ['comment', 'id', '123']
