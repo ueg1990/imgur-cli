@@ -55,11 +55,15 @@ def data_fields(args, allowed_fields):
 
 
 def format_comment_tree(comments):
-    result = []
-    for comment in comments:
-        comment_dict = comment.__dict__
-        comment_dict['children'] = build_comment_tree(comment_dict['children'])
-        result.append(comment_dict)
+    if ininstance(comments, list):
+        result = []
+        for comment in comments:
+            comment_dict = comment.__dict__
+            comment_dict['children'] = build_comment_tree(comment_dict['children'])
+            result.append(comment_dict)
+    else:
+        result = comments.__dict__
+        result['children'] = build_comment_tree(result['children'])
     return result
 
 
