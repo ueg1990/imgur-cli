@@ -10,7 +10,187 @@ from imgur_cli.utils import generate_output
 
 SUBPARSERS = {'gallery': 'Gallery subparser', 'album': 'Album subparser',
               'image': 'Image subparser', 'comment': 'Comment subparser',
-              'memegen': 'Memegen subparser'}
+              'memegen': 'Memegen subparser',
+              'custom-gallery': 'Custom Gallery subparser'}
+
+
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+def cmd_album_id(client, args):
+    """Get information about a specific album"""
+    album = client.get_album(args.album_id)
+    data = album.__dict__
+    generate_output({'album': data})
+
+
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_album_images(client, args):
+    """Return all of the images in the album"""
+    album_images = client.get_album_images(args.album_id)
+    data = [item.__dict__ for item in album_images]
+    generate_output({'album_images': data}, args.output_file)
+
+
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+@cli_arg('image_id', help='Image ID')
+def cmd_album_image(client, args):
+    """
+    Get information about an image in an album -
+    Not implemented yet in imgurpython
+    """
+    raise exceptions.CommandError('Not implemented yet in imgurpython')
+
+
+@cli_subparser('album')
+@cli_arg('--ids', metavar='<ids>', help='Comma separated list of image ids that you '
+         'want to be included in the album; you have to be logged in as the user '
+         'for adding the image ids')
+@cli_arg('--title', metavar='<title>', help='The title of the album')
+@cli_arg('--description', metavar='<description>',
+         help='The description of the album')
+@cli_arg('--privacy', metavar='<privacy>', choices=['public', 'hidden', 'secret'],
+         help="Sets the privacy level of the album."
+              "Values are : public | hidden | secret."
+              "Defaults to user's privacy settings for logged in users")
+@cli_arg('--layout', metavar='<layout>',
+         choices=['blog', 'grid', 'horizontal', 'vertical'],
+         help='Sets the layout to display the album. '
+         'Values are : blog | grid | horizontal | vertical')
+@cli_arg('--cover', metavar='<cover>',
+         help='The ID of an image that you want to be the cover of the album; '
+         'you have to be logged in as the user')
+def cmd_album_create(client, args):
+    """
+    Create a new album. Optional parameter of ids is an array of image ids to
+    add to the album; you have to be logged in as the user for adding the image ids.
+
+    This method is available without authenticating an account, and may be used
+    merely by sending "Authorization: Client-ID {client_id}" in the request headers.
+    Doing so will create an anonymous album which is not tied to an account
+    """
+    fields = data_fields(args, client.allowed_album_fields)
+    album = client.create_album(fields)
+    generate_output({'album': album})
+
+
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+@cli_arg('--ids', metavar='<ids>', help='Comma separated list of image ids that you '
+         'want to be included in the album; you have to be logged in as the user '
+         'for adding the image ids')
+@cli_arg('--title', metavar='<title>', help='The title of the album')
+@cli_arg('--description', metavar='<description>',
+         help='The description of the album')
+@cli_arg('--privacy', metavar='<privacy>', choices=['public', 'hidden', 'secret'],
+         help="Sets the privacy level of the album."
+              "Values are : public | hidden | secret."
+              "Defaults to user's privacy settings for logged in users")
+@cli_arg('--layout', metavar='<layout>',
+         choices=['blog', 'grid', 'horizontal', 'vertical'],
+         help='Sets the layout to display the album. '
+         'Values are : blog | grid | horizontal | vertical')
+@cli_arg('--cover', metavar='<cover>',
+         help='The ID of an image that you want to be the cover of the album; '
+         'you have to be logged in as the user')
+def cmd_album_update(client, args):
+    """
+    Update the information of an album. For anonymous albums, {album} should be the
+    deletehash that is returned at creation
+    """
+    fields = data_fields(args, client.allowed_album_fields)
+    album = client.update_album(args.album_id, fields)
+    generate_output({'album': album})
+
+
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+def cmd_album_delete(client, args):
+    """
+    Delete an album with a given ID. You are required to be logged in as the user
+    to delete the album. For anonymous albums, {album} should be the deletehash
+    that is returned at creation
+    """
+    delete_album = client.album_delete(args.album_id)
+    generate_output({'delete_album': delete_album})
+
+
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+def cmd_album_favorite(client, args):
+    """
+    Favorite an album with a given ID. The user is required to be logged in to
+    favorite the album
+    """
+    favorite_album = client.album_favorite(args.album_id)
+    generate_output({'favorite_album': favorite_album})
+
+
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+@cli_arg('ids', help='Comma separated list of image ids that you want to be added '
+         'to the album')
+def cmd_album_set_images(client, args):
+    """
+    Sets the images for an album, removes all other images and only uses the images
+    in this request. For anonymous albums, {album} should be the deletehash that
+    is returned at creation
+    """
+    set_images = client.album_set_images(args.album_id, args.ids)
+    generate_output({'set_images': set_images})
+
+
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+@cli_arg('ids', help='Comma separated list of image ids that you want to be added '
+         'to the album')
+def cmd_album_add_images(client, args):
+    """
+    Add images for an album from a given comma separated list of image ids.
+    For anonymous albums, {album} should be the deletehash that is returned
+    at creation
+    """
+    add_images = client.album_add_images(args.album_id, args.ids)
+    generate_output({'add_images': add_images})
+
+
+@cli_subparser('album')
+@cli_arg('album_id', help='Album ID')
+@cli_arg('ids', help='Comma separated list of image ids that you want to be removed '
+         'to the album')
+def cmd_album_remove_images(client, args):
+    """
+    Remove images for an album from a given comma separated list of image ids.
+    For anonymous albums, {album} should be the deletehash that is returned
+    at creation
+    """
+    remove_images = client.album_remove_images(args.album_id, args.ids)
+    generate_output({'remove_images': remove_images})
+
+
+@cli_subparser('custom-gallery')
+@cli_arg('gallery_id', help='Custom Gallery ID')
+@cli_arg('--sort', default='viral', metavar='<sort>',
+         choices=['viral', 'top', 'time'],
+         help='viral | top | time - defaults to %(default)s')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='The data paging number (defaults to %(default)s)')
+@cli_arg('--window', default='week', metavar='<window>',
+         choices=['day', 'week', 'month', 'year', 'all'],
+         help='Change the date range of the request if the sort is "top", '
+         'day | week | month | year | all (Defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_custom_gallery_items(client, args):
+    """View items for current user's custom gallery"""
+    custom_gallery = client.get_custom_gallery(args.gallery_id, args.sort,
+                                               args.window, args.page)
+    data = custom_gallery.__dict__
+    data['items'] = [item.__dict__ for item in data['items']]
+    generate_output({'custom_gallery': data}, args.output_file)
 
 
 @cli_subparser('gallery')
@@ -193,163 +373,6 @@ def cmd_gallery_comment_count(client, args):
     """The number of comments on an item in the gallery"""
     gallery_comment_count = client.gallery_comment_count(args.item_id)
     generate_output({'gallery_comment_count': gallery_comment_count})
-
-
-@cli_subparser('album')
-@cli_arg('album_id', help='Album ID')
-def cmd_album_id(client, args):
-    """Get information about a specific album"""
-    album = client.get_album(args.album_id)
-    data = album.__dict__
-    generate_output({'album': data})
-
-
-@cli_subparser('album')
-@cli_arg('album_id', help='Album ID')
-@cli_arg('--output-file', default=None, metavar='<output_file>',
-         help='Save output to a JSON file')
-def cmd_album_images(client, args):
-    """Return all of the images in the album"""
-    album_images = client.get_album_images(args.album_id)
-    data = [item.__dict__ for item in album_images]
-    generate_output({'album_images': data}, args.output_file)
-
-
-@cli_subparser('album')
-@cli_arg('album_id', help='Album ID')
-@cli_arg('image_id', help='Image ID')
-def cmd_album_image(client, args):
-    """
-    Get information about an image in an album -
-    Not implemented yet in imgurpython
-    """
-    raise exceptions.CommandError('Not implemented yet in imgurpython')
-
-
-@cli_subparser('album')
-@cli_arg('--ids', metavar='<ids>', help='Comma separated list of image ids that you '
-         'want to be included in the album; you have to be logged in as the user '
-         'for adding the image ids')
-@cli_arg('--title', metavar='<title>', help='The title of the album')
-@cli_arg('--description', metavar='<description>',
-         help='The description of the album')
-@cli_arg('--privacy', metavar='<privacy>', choices=['public', 'hidden', 'secret'],
-         help="Sets the privacy level of the album."
-              "Values are : public | hidden | secret."
-              "Defaults to user's privacy settings for logged in users")
-@cli_arg('--layout', metavar='<layout>',
-         choices=['blog', 'grid', 'horizontal', 'vertical'],
-         help='Sets the layout to display the album. '
-         'Values are : blog | grid | horizontal | vertical')
-@cli_arg('--cover', metavar='<cover>',
-         help='The ID of an image that you want to be the cover of the album; '
-         'you have to be logged in as the user')
-def cmd_album_create(client, args):
-    """
-    Create a new album. Optional parameter of ids is an array of image ids to
-    add to the album; you have to be logged in as the user for adding the image ids.
-
-    This method is available without authenticating an account, and may be used
-    merely by sending "Authorization: Client-ID {client_id}" in the request headers.
-    Doing so will create an anonymous album which is not tied to an account
-    """
-    fields = data_fields(args, client.allowed_album_fields)
-    album = client.create_album(fields)
-    generate_output({'album': album})
-
-
-@cli_subparser('album')
-@cli_arg('album_id', help='Album ID')
-@cli_arg('--ids', metavar='<ids>', help='Comma separated list of image ids that you '
-         'want to be included in the album; you have to be logged in as the user '
-         'for adding the image ids')
-@cli_arg('--title', metavar='<title>', help='The title of the album')
-@cli_arg('--description', metavar='<description>',
-         help='The description of the album')
-@cli_arg('--privacy', metavar='<privacy>', choices=['public', 'hidden', 'secret'],
-         help="Sets the privacy level of the album."
-              "Values are : public | hidden | secret."
-              "Defaults to user's privacy settings for logged in users")
-@cli_arg('--layout', metavar='<layout>',
-         choices=['blog', 'grid', 'horizontal', 'vertical'],
-         help='Sets the layout to display the album. '
-         'Values are : blog | grid | horizontal | vertical')
-@cli_arg('--cover', metavar='<cover>',
-         help='The ID of an image that you want to be the cover of the album; '
-         'you have to be logged in as the user')
-def cmd_album_update(client, args):
-    """
-    Update the information of an album. For anonymous albums, {album} should be the
-    deletehash that is returned at creation
-    """
-    fields = data_fields(args, client.allowed_album_fields)
-    album = client.update_album(args.album_id, fields)
-    generate_output({'album': album})
-
-
-@cli_subparser('album')
-@cli_arg('album_id', help='Album ID')
-def cmd_album_delete(client, args):
-    """
-    Delete an album with a given ID. You are required to be logged in as the user
-    to delete the album. For anonymous albums, {album} should be the deletehash
-    that is returned at creation
-    """
-    delete_album = client.album_delete(args.album_id)
-    generate_output({'delete_album': delete_album})
-
-
-@cli_subparser('album')
-@cli_arg('album_id', help='Album ID')
-def cmd_album_favorite(client, args):
-    """
-    Favorite an album with a given ID. The user is required to be logged in to
-    favorite the album
-    """
-    favorite_album = client.album_favorite(args.album_id)
-    generate_output({'favorite_album': favorite_album})
-
-
-@cli_subparser('album')
-@cli_arg('album_id', help='Album ID')
-@cli_arg('ids', help='Comma separated list of image ids that you want to be added '
-         'to the album')
-def cmd_album_set_images(client, args):
-    """
-    Sets the images for an album, removes all other images and only uses the images
-    in this request. For anonymous albums, {album} should be the deletehash that
-    is returned at creation
-    """
-    set_images = client.album_set_images(args.album_id, args.ids)
-    generate_output({'set_images': set_images})
-
-
-@cli_subparser('album')
-@cli_arg('album_id', help='Album ID')
-@cli_arg('ids', help='Comma separated list of image ids that you want to be added '
-         'to the album')
-def cmd_album_add_images(client, args):
-    """
-    Add images for an album from a given comma separated list of image ids.
-    For anonymous albums, {album} should be the deletehash that is returned
-    at creation
-    """
-    add_images = client.album_add_images(args.album_id, args.ids)
-    generate_output({'add_images': add_images})
-
-
-@cli_subparser('album')
-@cli_arg('album_id', help='Album ID')
-@cli_arg('ids', help='Comma separated list of image ids that you want to be removed '
-         'to the album')
-def cmd_album_remove_images(client, args):
-    """
-    Remove images for an album from a given comma separated list of image ids.
-    For anonymous albums, {album} should be the deletehash that is returned
-    at creation
-    """
-    remove_images = client.album_remove_images(args.album_id, args.ids)
-    generate_output({'remove_images': remove_images})
 
 
 @cli_subparser('image')
