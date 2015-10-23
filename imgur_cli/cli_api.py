@@ -408,17 +408,34 @@ def cmd_conversation_list(client, args):
     generate_output({'gallery_random': data}, args.output_file)
 
 
+@cli_subparser('conversation')
+@cli_arg('conversation_id', type=int, help='Conversation ID')
+@cli_arg('--page', default=1, metavar='<page>', type=int,
+         help='Page of message thread. Starting at 1 for the most recent 25 '
+         'messages and counting upwards (defaults to %(default)s)')
+@cli_arg('--offset', default=0, metavar='<offset>', type=int,
+         help='Additional offset in current page (defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_conversation_id(client, args):
+    """Get information about a specific conversation. Includes messages"""
+    conversation = client.get_conversation(args.conversation_id,
+                                           args.page, args.offset)
+    data = conversation.__dict__
+    try:
+        data['messages'] = [item.__dict__ for item in data['messages']]
+    except TypeError:
+        pass
+    generate_output({'conversation': data})
+
+
 @cli_subparser('comment')
-@cli_arg('comment_id', help='Comment ID')
+@cli_arg('comment_id', type=int, help='Comment ID')
 def cmd_comment_id(client, args):
     """Get information about a specific comment"""
-    try:
-        comment = client.get_comment(int(args.comment_id))
-        data = comment.__dict__
-        generate_output({'comment': data})
-    except ValueError:
-        raise exceptions.CommandError('Given comment id is a string; '
-                                      'expecting a number')
+    comment = client.get_comment(args.comment_id)
+    data = comment.__dict__
+    generate_output({'comment': data})
 
 
 @cli_subparser('memegen')
