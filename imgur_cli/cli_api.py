@@ -473,8 +473,8 @@ def cmd_conversation_block(client, args):
 def cmd_notification_all(client, args):
     """Get all notifications for the user that's currently logged in"""
     notifications_all = client.get_notifications(args.new)
-    notifications_all['messages'] = [message.__dict__ for message in notifications_all['messages']]
-    notifications_all['replies'] = [reply.__dict__ for reply in notifications_all['replies']]
+    notifications_all['messages'] = [message.__dict__ for message in
+                                     notifications_all['messages']]
     formatted_replies = []
     for reply in notifications_all['replies']:
         formatted_reply = reply.__dict__
@@ -484,7 +484,15 @@ def cmd_notification_all(client, args):
     generate_output({'notifications_all': notifications_all}, args.output_file)
 
 
-
+@cli_subparser('notification')
+@cli_arg('notification_id', type=int, help='Notification ID')
+def cmd_notification_id(client, args):
+    """Returns the data about a specific notification"""
+    notification = client.get_notification(args.notification_id)
+    notification = notification.__dict__
+    if 'comment' in notification['content']:
+        notification['content'] = format_comment_tree(notification['content'])
+    generate_output({'notification': notification})
 
 
 @cli_subparser('comment')
