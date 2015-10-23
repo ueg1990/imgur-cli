@@ -51,7 +51,7 @@ class TestImgurCli(testtools.TestCase):
         followed by the subcommand and the remaining items are positional arguments
         """
         number_of_parsing_levels = 2
-        cmd = 'cmd_{0}_{1}'.format(argv[0], argv[1].replace('-', '_'))
+        cmd = 'cmd_{0}_{1}'.format(argv[0], argv[1]).replace('-', '_')
         self.assertEqual(parser_args.func.__name__, cmd)
         self.assertTrue(argv[1] in _cli.subcommands)
         self.assertTrue(argv[0] in _cli.subparsers)
@@ -92,6 +92,93 @@ class TestImgurCli(testtools.TestCase):
 
     def test_help_unknown_command(self):
         self.assertRaises(exceptions.CommandError, self.cli, ['help', 'foofoo'])
+
+    def test_album(self):
+        argv = ['album', 'id', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_album.called)
+
+    def test_album_images(self):
+        argv = ['album', 'images', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertEqual(parser_args.output_file, None)
+        self.assertTrue(_cli.client.get_album_images.called)
+        self.assertRaises(SystemExit, self.cli,
+                          [argv[0], '--output-file', 'dummy.json'])
+
+    def test_album_create(self):
+        argv = ['album', 'create', '--title', 'test']
+        self._client.return_value.allowed_album_fields = {'ids', 'title',
+                                                          'description', 'privacy',
+                                                          'layout', 'cover'}
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.create_album.called)
+        _cli.client.create_album.assert_called_with({'title': 'test'})
+
+    def test_album_update(self):
+        argv = ['album', 'update', '123', '--title', 'test']
+        self._client.return_value.allowed_album_fields = {'ids', 'title',
+                                                          'description', 'privacy',
+                                                          'layout', 'cover'}
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.update_album.called)
+        _cli.client.update_album.assert_called_with('123', {'title': 'test'})
+
+    def test_album_delete(self):
+        argv = ['album', 'delete', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.album_delete.called)
+
+    def test_album_favorite(self):
+        argv = ['album', 'favorite', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.album_favorite.called)
+
+    def test_album_set_images(self):
+        argv = ['album', 'set-images', '123', 'abc']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.album_set_images.called)
+
+    def test_album_add_images(self):
+        argv = ['album', 'add-images', '123', 'abc']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.album_add_images.called)
+
+    def test_album_remove_images(self):
+        argv = ['album', 'remove-images', '123', 'abc']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.album_remove_images.called)
+
+    def test_custom_gallery_items(self):
+        argv = ['custom-gallery', 'items', '123']
+        self._client.return_value.get_custom_gallery.return_value = \
+            mock.Mock(items=[])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_custom_gallery.called)
+        expected_args = {'sort': 'viral', 'page': 0, 'window': 'week',
+                         'output_file': None}
+        self.assertTrue(all(getattr(parser_args, key) == value
+                            for key, value in expected_args.items()))
 
     def test_gallery(self):
         argv = ['gallery', 'items']
@@ -230,80 +317,6 @@ class TestImgurCli(testtools.TestCase):
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.gallery_comment_count.called)
-
-    def test_album(self):
-        argv = ['album', 'id', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.get_album.called)
-
-    def test_album_images(self):
-        argv = ['album', 'images', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertEqual(parser_args.output_file, None)
-        self.assertTrue(_cli.client.get_album_images.called)
-        self.assertRaises(SystemExit, self.cli,
-                          [argv[0], '--output-file', 'dummy.json'])
-
-    def test_album_create(self):
-        argv = ['album', 'create', '--title', 'test']
-        self._client.return_value.allowed_album_fields = {'ids', 'title',
-                                                          'description', 'privacy',
-                                                          'layout', 'cover'}
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.create_album.called)
-        _cli.client.create_album.assert_called_with({'title': 'test'})
-
-    def test_album_update(self):
-        argv = ['album', 'update', '123', '--title', 'test']
-        self._client.return_value.allowed_album_fields = {'ids', 'title',
-                                                          'description', 'privacy',
-                                                          'layout', 'cover'}
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.update_album.called)
-        _cli.client.update_album.assert_called_with('123', {'title': 'test'})
-
-    def test_album_delete(self):
-        argv = ['album', 'delete', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.album_delete.called)
-
-    def test_album_favorite(self):
-        argv = ['album', 'favorite', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.album_favorite.called)
-
-    def test_album_set_images(self):
-        argv = ['album', 'set-images', '123', 'abc']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.album_set_images.called)
-
-    def test_album_add_images(self):
-        argv = ['album', 'add-images', '123', 'abc']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.album_add_images.called)
-
-    def test_album_remove_images(self):
-        argv = ['album', 'remove-images', '123', 'abc']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.album_remove_images.called)
 
     def test_image(self):
         argv = ['image', 'id', '123']
