@@ -11,7 +11,8 @@ from imgur_cli.utils import generate_output
 SUBPARSERS = {'gallery': 'Gallery subparser', 'album': 'Album subparser',
               'image': 'Image subparser', 'comment': 'Comment subparser',
               'memegen': 'Memegen subparser',
-              'custom-gallery': 'Custom Gallery subparser'}
+              'custom-gallery': 'Custom Gallery subparser',
+              'conversation': 'Conversation subparser'}
 
 
 @cli_subparser('album')
@@ -189,7 +190,10 @@ def cmd_custom_gallery_items(client, args):
     custom_gallery = client.get_custom_gallery(args.gallery_id, args.sort,
                                                args.window, args.page)
     data = custom_gallery.__dict__
-    data['items'] = [item.__dict__ for item in data['items']]
+    try:
+        data['items'] = [item.__dict__ for item in data['items']]
+    except TypeError:
+        pass
     generate_output({'custom_gallery': data}, args.output_file)
 
 
@@ -440,6 +444,16 @@ def cmd_image_favorite(client, args):
     """
     favorite_image = client.favorite_image(args.image_id)
     generate_output({'favorite_image': favorite_image})
+
+
+@cli_subparser('conversation')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_conversation_list(client, args):
+    """Get list of all conversations for the logged in user"""
+    conversation_list = client.conversation_list()
+    data = [item.__dict__ for item in conversation_list]
+    generate_output({'gallery_random': data}, args.output_file)
 
 
 @cli_subparser('comment')
