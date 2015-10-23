@@ -475,7 +475,16 @@ def cmd_notification_all(client, args):
     notifications_all = client.get_notifications(args.new)
     notifications_all['messages'] = [message.__dict__ for message in notifications_all['messages']]
     notifications_all['replies'] = [reply.__dict__ for reply in notifications_all['replies']]
+    formatted_replies = []
+    for reply in notifications_all['replies']:
+        formatted_reply = reply.__dict__
+        formatted_reply['content'] = format_comment_tree(formatted_reply['content'])
+        formatted_replies.append(formatted_reply)
+    notifications_all['replies'] = formatted_replies
     generate_output({'notifications_all': notifications_all}, args.output_file)
+
+
+
 
 
 @cli_subparser('comment')
