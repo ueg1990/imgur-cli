@@ -12,7 +12,8 @@ SUBPARSERS = {'gallery': 'Gallery subparser', 'album': 'Album subparser',
               'image': 'Image subparser', 'comment': 'Comment subparser',
               'memegen': 'Memegen subparser',
               'custom-gallery': 'Custom Gallery subparser',
-              'conversation': 'Conversation subparser'}
+              'conversation': 'Conversation subparser',
+              'notification': 'Notification subparser'}
 
 
 @cli_subparser('album')
@@ -461,6 +462,20 @@ def cmd_conversation_block(client, args):
     """Block the user from sending messages to the user that is logged in"""
     block_sender = client.block_sender(args.username)
     generate_output({'block_sender': block_sender})
+
+
+@cli_subparser('notification')
+@cli_arg('--new', default=True, metavar='<new>', choices=[True, False], type=bool,
+         help='boolean - false for all notifications, true for only non-viewed '
+         'notification (defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_notification_all(client, args):
+    """Get all notifications for the user that's currently logged in"""
+    notifications_all = client.get_notifications(args.new)
+    notifications_all['messages'] = [message.__dict__ for message in notifications_all['messages']]
+    notifications_all['replies'] = [reply.__dict__ for reply in notifications_all['replies']]
+    generate_output({'notifications_all': notifications_all}, args.output_file)
 
 
 @cli_subparser('comment')
