@@ -102,9 +102,10 @@ class ImgurCli:
     def _add_subcommands(self, cli_api):
         for attr in (action for action in dir(cli_api)
                      if action.startswith('cmd_')):
-            name = '-'.join(attr.split('_')[2:])
             callback = getattr(cli_api, attr)
             subparser_name = getattr(callback, 'subparser', None)
+            name = (attr[len('cmd_{0}_'.format(subparser_name.replace('-', '_'))):]
+                    .replace('_', '-'))
             subparser = self.subparsers[subparser_name]['subparser']
             self._generate_subcommand(name, callback, subparser)
 
