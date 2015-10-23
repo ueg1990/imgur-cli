@@ -36,17 +36,6 @@ def cmd_album_images(client, args):
 
 
 @cli_subparser('album')
-@cli_arg('album_id', help='Album ID')
-@cli_arg('image_id', help='Image ID')
-def cmd_album_image(client, args):
-    """
-    Get information about an image in an album -
-    Not implemented yet in imgurpython
-    """
-    raise exceptions.CommandError('Not implemented yet in imgurpython')
-
-
-@cli_subparser('album')
 @cli_arg('--ids', metavar='<ids>', help='Comma separated list of image ids that you '
          'want to be included in the album; you have to be logged in as the user '
          'for adding the image ids')
@@ -170,31 +159,6 @@ def cmd_album_remove_images(client, args):
     """
     remove_images = client.album_remove_images(args.album_id, args.ids)
     generate_output({'remove_images': remove_images})
-
-
-@cli_subparser('custom-gallery')
-@cli_arg('gallery_id', help='Custom Gallery ID')
-@cli_arg('--sort', default='viral', metavar='<sort>',
-         choices=['viral', 'top', 'time'],
-         help='viral | top | time - defaults to %(default)s')
-@cli_arg('--page', default=0, metavar='<page>', type=int,
-         help='The data paging number (defaults to %(default)s)')
-@cli_arg('--window', default='week', metavar='<window>',
-         choices=['day', 'week', 'month', 'year', 'all'],
-         help='Change the date range of the request if the sort is "top", '
-         'day | week | month | year | all (Defaults to %(default)s)')
-@cli_arg('--output-file', default=None, metavar='<output_file>',
-         help='Save output to a JSON file')
-def cmd_custom_gallery_items(client, args):
-    """View items for current user's custom gallery"""
-    custom_gallery = client.get_custom_gallery(args.gallery_id, args.sort,
-                                               args.window, args.page)
-    data = custom_gallery.__dict__
-    try:
-        data['items'] = [item.__dict__ for item in data['items']]
-    except TypeError:
-        pass
-    generate_output({'custom_gallery': data}, args.output_file)
 
 
 @cli_subparser('gallery')
@@ -421,18 +385,6 @@ def cmd_image_delete(client, args):
     """
     image_to_delete = client.delete_image(args.image_id)
     generate_output({'deleted': image_to_delete})
-
-
-@cli_subparser('image')
-@cli_arg('--title', metavar='<title>', help='The title of the album')
-@cli_arg('--description', metavar='<description>')
-def cmd_image_update(client, args):
-    """
-    Updates the title or description of an image. You can only update an image
-    you own and is associated with your account. For an anonymous image,
-    {id} must be the image's deletehash -  Not implemented yet in imgurpython
-    """
-    raise exceptions.CommandError('Not implemented yet in imgurpython')
 
 
 @cli_subparser('image')

@@ -167,19 +167,6 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.album_remove_images.called)
 
-    def test_custom_gallery_items(self):
-        argv = ['custom-gallery', 'items', '123']
-        self._client.return_value.get_custom_gallery.return_value = \
-            mock.Mock(items=[])
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.get_custom_gallery.called)
-        expected_args = {'sort': 'viral', 'page': 0, 'window': 'week',
-                         'output_file': None}
-        self.assertTrue(all(getattr(parser_args, key) == value
-                            for key, value in expected_args.items()))
-
     def test_gallery(self):
         argv = ['gallery', 'items']
         _cli = self.cli(argv)
