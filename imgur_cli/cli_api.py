@@ -433,10 +433,18 @@ def cmd_conversation_id(client, args):
 @cli_arg('recipient', help='The recipient username, this person will receive '
          'the message')
 @cli_arg('body', help='The message body')
-def cmd_conversation_create_message(client, args):
+def cmd_conversation_create(client, args):
     """Create a new message"""
     create_message = client.create_message(args.recipient, args.body)
     generate_output({'create_message': create_message})
+
+
+@cli_subparser('conversation')
+@cli_arg('conversation_id', type=int, help='Conversation ID')
+def cmd_conversation_delete(client, args):
+    """Delete a conversation by the given ID"""
+    delete_conversation = client.delete_conversation(args.conversation_id)
+    generate_output({'delete_conversation': delete_conversation})
 
 
 @cli_subparser('comment')
