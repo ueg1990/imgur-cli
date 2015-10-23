@@ -429,6 +429,16 @@ def cmd_conversation_id(client, args):
     generate_output({'conversation': data})
 
 
+@cli_subparser('conversation')
+@cli_arg('recipient', help='The recipient username, this person will receive '
+         'the message')
+@cli_arg('body', help='The message body')
+def cmd_conversation_create_message(client, args):
+    """Create a new message"""
+    create_message = client.create_message(args.recipient, args.body)
+    generate_output({'create_message': create_message})
+
+
 @cli_subparser('comment')
 @cli_arg('comment_id', type=int, help='Comment ID')
 def cmd_comment_id(client, args):
