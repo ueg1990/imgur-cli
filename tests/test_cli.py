@@ -65,6 +65,9 @@ class TestImgurCli(testtools.TestCase):
                 positional_args.append(arg)
             for index, arg in enumerate(positional_args,
                                         start=number_of_parsing_levels):
+                args_type = parser_args.func.arguments[0][1].get('type')
+                if args_type:
+                    argv[index] = args_type(argv[index])
                 self.assertEqual(getattr(parser_args, arg), argv[index])
                 self.assertRaises(SystemExit, self.cli, argv[:index])
 
@@ -230,6 +233,7 @@ class TestImgurCli(testtools.TestCase):
         argv.extend(['--page', '12', '--output-file', 'dummy.json'])
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
+        self.assertTrue(_cli.client.gallery_random.called)
         self.assertEqual(parser_args.page, int(argv[3]))
         self.assertEqual(parser_args.output_file, argv[5])
         self.assertTrue(isinstance(parser_args.page, int))
@@ -345,14 +349,21 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.conversation_list.called)
 
-    def test_comment(self):
+    def test_conversation_id(self):
+        argv = ['conversation', 'id', '123']
+        self._client.return_value.get_conversation.return_value = \
+            mock.Mock(messages=[])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_conversation.called)
+
+    def test_comment_id(self):
         argv = ['comment', 'id', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_comment.called)
-        argv[2] = 'abc'
-        self.assertRaises(exceptions.CommandError, self.cli, argv)
 
     def test_memegen_default_memes(self):
         argv = ['memegen', 'default-memes']
