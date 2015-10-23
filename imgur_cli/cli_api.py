@@ -447,6 +447,14 @@ def cmd_conversation_delete(client, args):
     generate_output({'delete_conversation': delete_conversation})
 
 
+@cli_subparser('conversation')
+@cli_arg('username', help='Username of sender to report')
+def cmd_conversation_report_sender(client, args):
+    """Report a user for sending messages that are against the Terms of Service"""
+    report_sender = client.report_sender(args.username)
+    generate_output({'report_sender': report_sender})
+
+
 @cli_subparser('comment')
 @cli_arg('comment_id', type=int, help='Comment ID')
 def cmd_comment_id(client, args):
