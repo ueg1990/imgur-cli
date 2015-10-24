@@ -65,10 +65,15 @@ class TestImgurCli(testtools.TestCase):
                 positional_args.append(arg)
             for index, arg in enumerate(positional_args,
                                         start=number_of_parsing_levels):
-                args_type = parser_args.func.arguments[0][1].get('type')
+                args_type = (
+                    parser_args.func.arguments[index - number_of_parsing_levels][1]
+                    .get('type')
+                )
                 if args_type:
-                    argv[index] = args_type(argv[index])
-                self.assertEqual(getattr(parser_args, arg), argv[index])
+                    self.assertEqual(getattr(parser_args, arg),
+                                     args_type(argv[index]))
+                else:
+                    self.assertEqual(getattr(parser_args, arg), argv[index])
                 self.assertRaises(SystemExit, self.cli, argv[:index])
 
     def make_env(self, exclude=None):
@@ -431,6 +436,13 @@ class TestImgurCli(testtools.TestCase):
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_comment_replies.called)
+
+    def test_comment_reply(self):
+        argv = ['comment', 'reply', '123', '456', 'Test comment']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.post_comment_reply.called)
 
     def test_memegen_default_memes(self):
         argv = ['memegen', 'default-memes']
