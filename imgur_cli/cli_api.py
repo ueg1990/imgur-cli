@@ -538,6 +538,17 @@ def cmd_comment_replies(client, args):
     generate_output({'comment_replies': data}, args.output_file)
 
 
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+@cli_arg('image_id', help='Image ID')
+@cli_arg('comment', help='The comment text, this is what will be displayed')
+def cmd_comment_reply(client, args):
+    """Create a reply for the given comment"""
+    comment_reply = client.post_comment_reply(args.comment_id, args.image_id,
+                                              args.comment)
+    generate_output({'comment_reply': comment_reply})
+
+
 @cli_subparser('memegen')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
