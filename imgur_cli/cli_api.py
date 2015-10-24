@@ -519,6 +519,14 @@ def cmd_comment_id(client, args):
     generate_output({'comment': data})
 
 
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+def cmd_comment_delete(client, args):
+    """Delete a comment by the given id"""
+    delete_comment = client.delete_comment(args.comment_id)
+    generate_output({'delete_comment': delete_comment})
+
+
 @cli_subparser('memegen')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
