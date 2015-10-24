@@ -451,6 +451,13 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.comment_vote.called)
 
+    def test_comment_report(self):
+        argv = ['comment', 'report', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.comment_report.called)
+
     def test_memegen_default_memes(self):
         argv = ['memegen', 'default-memes']
         _cli = self.cli(argv)
