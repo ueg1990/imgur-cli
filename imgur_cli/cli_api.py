@@ -549,6 +549,16 @@ def cmd_comment_reply(client, args):
     generate_output({'comment_reply': comment_reply})
 
 
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+@cli_arg('--vote', default='up', metavar='<vote>', choices=['up', 'down'],
+         help="'up' or 'down'")
+def cmd_comment_vote(client, args):
+    """Vote on a comment. The {vote} variable can only be set as "up" or "down"""
+    comment_vote = client.comment_vote(args.comment_id, args.vote)
+    generate_output({'comment_vote': comment_vote})
+
+
 @cli_subparser('memegen')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
