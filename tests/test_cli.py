@@ -424,6 +424,14 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.delete_comment.called)
 
+    @mock.patch('imgur_cli.cli_api.format_comment_tree')
+    def test_comment_replies(self, mock_format_comment_tree):
+        argv = ['comment', 'replies', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_comment_replies.called)
+
     def test_memegen_default_memes(self):
         argv = ['memegen', 'default-memes']
         _cli = self.cli(argv)
