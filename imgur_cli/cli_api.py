@@ -406,7 +406,7 @@ def cmd_conversation_list(client, args):
     """Get list of all conversations for the logged in user"""
     conversation_list = client.conversation_list()
     data = [item.__dict__ for item in conversation_list]
-    generate_output({'gallery_random': data}, args.output_file)
+    generate_output({'conversation_list': data}, args.output_file)
 
 
 @cli_subparser('conversation')
@@ -525,6 +525,17 @@ def cmd_comment_delete(client, args):
     """Delete a comment by the given id"""
     delete_comment = client.delete_comment(args.comment_id)
     generate_output({'delete_comment': delete_comment})
+
+
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_comment_replies(client, args):
+    """Get the comment with all of the replies for the comment"""
+    comment_replies = client.get_comment_replies(args.comment_id)
+    data = format_comment_tree(comment_replies)
+    generate_output({'comment_replies': data}, args.output_file)
 
 
 @cli_subparser('memegen')
