@@ -559,6 +559,14 @@ def cmd_comment_vote(client, args):
     generate_output({'comment_vote': comment_vote})
 
 
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+def cmd_comment_report(client, args):
+    """Report a comment for being inappropriate"""
+    comment_report = client.comment_report(args.comment_id)
+    generate_output({'comment_report': comment_report})
+
+
 @cli_subparser('memegen')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
