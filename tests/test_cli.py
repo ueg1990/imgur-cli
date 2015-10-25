@@ -147,10 +147,8 @@ class TestImgurCli(testtools.TestCase):
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.change_account_settings.called)
-        expected_args = {'accepted_gallery_terms': True, 'public_images': True,
-                         'messaging_enabled': True, 'album_privacy': 'public',
-                         'username': 'ueg1990'}
-        _cli.client.change_account_settings.assert_called_with('ue90', expected_args)
+        expected_args = 'ue90', {'username': 'ueg1990'}
+        _cli.client.change_account_settings.assert_called_with(*expected_args)
 
     def test_album(self):
         argv = ['album', 'id', '123']
