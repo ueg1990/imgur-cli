@@ -39,6 +39,20 @@ def cmd_account_gallery_favorites(client, args):
     generate_output({'gallery_favorites': data}, args.output_file)
 
 
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_account_favorites(client, args):
+    """
+    Returns the users favorited images, only accessible if you're logged
+    in as the user
+    """
+    account_favorites = client.get_account_favorites(args.username)
+    data = [item.__dict__ for item in account_favorites]
+    generate_output({'account_favorites': data}, args.output_file)
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
