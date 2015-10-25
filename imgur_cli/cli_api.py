@@ -66,6 +66,18 @@ def cmd_account_submissions(client, args):
     generate_output({'account_submissions': data}, args.output_file)
 
 
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+def cmd_account_settings(client, args):
+    """
+    Returns the account settings, only accessible if you're logged
+    in as the user
+    """
+    account_settings = client.get_account_settings(args.username)
+    data = account_settings.__dict__
+    generate_output({'account_settings': data})
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
