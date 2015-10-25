@@ -78,6 +78,31 @@ def cmd_account_settings(client, args):
     generate_output({'account_settings': data})
 
 
+@cli_subparser('account')
+@cli_arg('user', help='Username of Account')
+@cli_arg('--bio', metavar='<bio>', help='The biography of the user, '
+         'is displayed in the gallery profile page')
+@cli_arg('--public-images', metavar='<public-images>', default=True,
+         choices=[True, False], type=bool, help='Set the users images to private '
+         'or public by default')
+@cli_arg('--messaging-enabled', metavar='<messaging-enabled>', default=True,
+         choices=[True, False], type=bool, help='Allows the user to enable or '
+         'disable private messages')
+@cli_arg('--album-privacy', metavar='<album-privacy>', default='public',
+         choices=['public', 'hidden', 'secret'], help='public | hidden | secret - '
+         'Sets the default privacy level of albums the users creates')
+@cli_arg('--accepted-gallery-terms', metavar='<accepted-gallery-terms>',
+         default=True, choices=[True, False], type=bool,
+         help='The user agreement to the Imgur Gallery terms')
+@cli_arg('--username', metavar='<username>',
+         help='A valid Imgur username (between 4 and 63 alphanumeric characters)')
+def cmd_account_change_settings(client, args):
+    """Updates the account settings for a given user, the user must be logged in"""
+    fields = data_fields(args, client.allowed_account_fields)
+    account_settings = client.change_account_settings(args.user, fields)
+    generate_output({'account_settings': account_settings})
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
