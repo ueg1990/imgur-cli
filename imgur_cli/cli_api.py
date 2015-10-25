@@ -10,10 +10,22 @@ from imgur_cli.utils import generate_output
 
 SUBPARSERS = {'gallery': 'Gallery subparser', 'album': 'Album subparser',
               'image': 'Image subparser', 'comment': 'Comment subparser',
-              'memegen': 'Memegen subparser',
+              'memegen': 'Memegen subparser', 'account': 'Account subparser',
               'custom-gallery': 'Custom Gallery subparser',
               'conversation': 'Conversation subparser',
               'notification': 'Notification subparser'}
+
+
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+def cmd_account_user(client, args):
+    """
+    Request standard user information. If you need the username for the account
+    that is logged in, it is returned in the request for an access token
+    """
+    account_user = client.get_account(args.username)
+    data = account_user.__dict__
+    generate_output({'account_user': data})
 
 
 @cli_subparser('album')
