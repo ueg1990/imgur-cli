@@ -28,6 +28,17 @@ def cmd_account_user(client, args):
     generate_output({'account_user': data})
 
 
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_account_gallery_favorites(client, args):
+    """Return the images the user has favorited in the gallery"""
+    gallery_favorites = client.get_gallery_favorites(args.username)
+    data = [item.__dict__ for item in gallery_favorites]
+    generate_output({'gallery_favorites': data}, args.output_file)
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
