@@ -101,6 +101,13 @@ class TestImgurCli(testtools.TestCase):
     def test_help_unknown_command(self):
         self.assertRaises(exceptions.CommandError, self.cli, ['help', 'foofoo'])
 
+    def test_account_user(self):
+        argv = ['account', 'user', 'me']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_account.called)
+
     def test_album(self):
         argv = ['album', 'id', '123']
         _cli = self.cli(argv)
