@@ -186,6 +186,14 @@ def cmd_account_comment_ids(client, args):
     generate_output({'account_comment_ids': account_comment_ids})
 
 
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+def cmd_account_comment_count(client, args):
+    """Return a count of all of the comments associated with the account"""
+    account_comment_count = client.get_account_comment_count(args.username)
+    generate_output({'account_comment_count': account_comment_count})
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
