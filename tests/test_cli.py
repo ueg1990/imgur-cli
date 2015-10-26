@@ -150,6 +150,13 @@ class TestImgurCli(testtools.TestCase):
         expected_args = 'ue90', {'username': 'ueg1990'}
         _cli.client.change_account_settings.assert_called_with(*expected_args)
 
+    def test_account_email_verification_status(self):
+        argv = ['account', 'verification-status', 'me']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_email_verification_status.called)
+
     def test_album(self):
         argv = ['album', 'id', '123']
         _cli = self.cli(argv)
