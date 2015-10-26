@@ -139,6 +139,17 @@ def cmd_account_albums(client, args):
     generate_output({'account_albums': data}, args.output_file)
 
 
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='allows you to set the page number so you do n0t have to retrieve '
+              'all the data at once (defaults to %(default)s)')
+def cmd_account_album_ids(client, args):
+    """Return an array of all of the album IDs"""
+    account_album_ids = client.get_account_album_ids(args.username, args.page)
+    generate_output({'account_album_ids': account_album_ids})
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
