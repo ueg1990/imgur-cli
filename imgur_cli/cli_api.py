@@ -216,6 +216,14 @@ def cmd_account_image_ids(client, args):
     generate_output({'account_image_ids': account_image_ids})
 
 
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+def cmd_account_image_count(client, args):
+    """Return the total number of albums associated with the account"""
+    account_image_count = client.get_account_images_count(args.username)
+    generate_output({'account_image_count': account_image_count})
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
