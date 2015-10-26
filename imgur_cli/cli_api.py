@@ -142,8 +142,7 @@ def cmd_account_albums(client, args):
 @cli_subparser('account')
 @cli_arg('username', help='Username of Account')
 @cli_arg('--page', default=0, metavar='<page>', type=int,
-         help='allows you to set the page number so you do n0t have to retrieve '
-              'all the data at once (defaults to %(default)s)')
+         help='Page number (defaults to %(default)s)')
 def cmd_account_album_ids(client, args):
     """Return an array of all of the album IDs"""
     account_album_ids = client.get_account_album_ids(args.username, args.page)
@@ -156,6 +155,20 @@ def cmd_account_album_count(client, args):
     """Return the total number of albums associated with the account"""
     account_album_count = client.get_account_album_count(args.username)
     generate_output({'account_album_count': account_album_count})
+
+
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+@cli_arg('--sort', default='newest', metavar='<sort>',
+         choices=['best', 'worst', 'oldest', 'newest'],
+         help='best | worst | oldest | newest - defaults to %(default)s')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='Page number (defaults to %(default)s)')
+def cmd_account_comment_ids(client, args):
+    """Return an array of all of the comment IDs"""
+    account_comment_ids = client.get_account_comment_ids(args.username, args.sort,
+                                                         args.page)
+    generate_output({'account_comment_ids': account_comment_ids})
 
 
 @cli_subparser('album')
