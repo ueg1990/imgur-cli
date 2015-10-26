@@ -185,6 +185,14 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_account_album_count.called)
 
+    @mock.patch('imgur_cli.cli_api.format_comment_tree')
+    def test_account_comments(self, mock_format_comment_tree):
+        argv = ['account', 'comments', 'me']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_account_comments.called)
+
     def test_account_comment_ids(self):
         argv = ['account', 'comment-ids', 'me']
         _cli = self.cli(argv)
