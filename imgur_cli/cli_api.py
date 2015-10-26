@@ -206,6 +206,16 @@ def cmd_account_images(client, args):
     generate_output({'account_images': data}, args.output_file)
 
 
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='Page number (defaults to %(default)s)')
+def cmd_account_image_ids(client, args):
+    """Returns an array of Image IDs that are associated with the account"""
+    account_image_ids = client.get_account_image_ids(args.username, args.page)
+    generate_output({'account_image_ids': account_image_ids})
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
