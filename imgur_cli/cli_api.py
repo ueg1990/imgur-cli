@@ -166,7 +166,7 @@ def cmd_account_album_count(client, args):
 def cmd_account_comments(client, args):
     """Return the comments the user has created"""
     account_comments = client.get_account_comments(args.username, args.sort,
-                                                      args.page)
+                                                   args.page)
     data = format_comment_tree(account_comments)
     generate_output({'account_comments': data})
 
