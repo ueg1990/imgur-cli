@@ -122,6 +122,23 @@ def cmd_account_send_verification(client, args):
     generate_output({'verification_email': verification_email})
 
 
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='allows you to set the page number so you do n0t have to retrieve '
+              'all the data at once (defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_account_albums(client, args):
+    """
+    Get all the albums associated with the account. Must be logged in as the user
+    to see secret and hidden albums
+    """
+    account_albums = client.get_account_albums(args.username, args.page)
+    data = [item.__dict__ for item in account_albums]
+    generate_output({'account_albums': data}, args.output_file)
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
