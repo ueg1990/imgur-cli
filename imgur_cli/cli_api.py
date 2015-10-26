@@ -103,6 +103,14 @@ def cmd_account_change_settings(client, args):
     generate_output({'account_settings': account_settings})
 
 
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+def cmd_account_verification_status(client, args):
+    """Checks to see if user has verified their email address"""
+    email_verification_status = client.get_email_verification_status(args.username)
+    generate_output({'email_verification_status': email_verification_status})
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
