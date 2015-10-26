@@ -125,8 +125,7 @@ def cmd_account_send_verification(client, args):
 @cli_subparser('account')
 @cli_arg('username', help='Username of Account')
 @cli_arg('--page', default=0, metavar='<page>', type=int,
-         help='allows you to set the page number so you do n0t have to retrieve '
-              'all the data at once (defaults to %(default)s)')
+         help='Page number (defaults to %(default)s)')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
 def cmd_account_albums(client, args):
@@ -192,6 +191,19 @@ def cmd_account_comment_count(client, args):
     """Return a count of all of the comments associated with the account"""
     account_comment_count = client.get_account_comment_count(args.username)
     generate_output({'account_comment_count': account_comment_count})
+
+
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='Page number (defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_account_images(client, args):
+    """Return all of the images associated with the account"""
+    account_images = client.get_account_images(args.username, args.page)
+    data = [item.__dict__ for item in account_images]
+    generate_output({'account_images': data}, args.output_file)
 
 
 @cli_subparser('album')
