@@ -164,6 +164,21 @@ def cmd_account_album_count(client, args):
          help='best | worst | oldest | newest - defaults to %(default)s')
 @cli_arg('--page', default=0, metavar='<page>', type=int,
          help='Page number (defaults to %(default)s)')
+def cmd_account_comments(client, args):
+    """Return the comments the user has created"""
+    account_comments = client.get_account_comments(args.username, args.sort,
+                                                      args.page)
+    data = format_comment_tree(account_comments)
+    generate_output({'account_comments': data})
+
+
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+@cli_arg('--sort', default='newest', metavar='<sort>',
+         choices=['best', 'worst', 'oldest', 'newest'],
+         help='best | worst | oldest | newest - defaults to %(default)s')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='Page number (defaults to %(default)s)')
 def cmd_account_comment_ids(client, args):
     """Return an array of all of the comment IDs"""
     account_comment_ids = client.get_account_comment_ids(args.username, args.sort,
