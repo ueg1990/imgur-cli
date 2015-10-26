@@ -111,6 +111,17 @@ def cmd_account_verification_status(client, args):
     generate_output({'email_verification_status': email_verification_status})
 
 
+@cli_subparser('account')
+@cli_arg('username', help='Username of Account')
+def cmd_account_send_verification(client, args):
+    """
+    Sends an email to the user to verify that their email is valid to upload to
+    gallery. Must be logged in as the user to send
+    """
+    verification_email = client.send_verification_email(args.username)
+    generate_output({'verification_email': verification_email})
+
+
 @cli_subparser('album')
 @cli_arg('album_id', help='Album ID')
 def cmd_album_id(client, args):
