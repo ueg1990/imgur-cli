@@ -809,3 +809,10 @@ def cmd_set_user_auth(client, args):
         os.environ['IMGUR_REFRESH_TOKEN'] = refresh_token
         client.set_user_auth(access_token, refresh_token)
         print('Authorization done!')
+
+
+@cli_subparser('set')
+@cli_arg('mashape-key', metavar='<mashape-key>', help='Mashape Key')
+def cmd_set_mashape_key(client, args):
+    """Set Mashape Key in the Environment variables"""
+    os.environ['IMGUR_MASHAPE_KEY'] = args.mashape_key
