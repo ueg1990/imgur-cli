@@ -603,3 +603,9 @@ class TestImgurCli(testtools.TestCase):
         parser_args = _cli.parser.parse_args(argv)
         self.assertTrue(_cli.client.authorize.called)
         self.assertTrue(_cli.client.set_user_auth.called)
+
+    def test_set_mashape_key(self):
+        argv = ['set', 'mashape-key', 'xyz']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
