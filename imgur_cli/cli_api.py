@@ -1,3 +1,5 @@
+import os
+
 import imgurpython
 
 from imgur_cli import exceptions
@@ -783,3 +785,27 @@ def cmd_notification_mark(client, args):
     notifications_marked_as_viewed = client.mark_notifications_as_read(args.ids)
     generate_output({'notifications_marked_as_viewed':
                      notifications_marked_as_viewed})
+
+
+@cli_subparser('set')
+@cli_arg('--client-id', default=os.environ.get('IMGUR_CLIENT_ID'),
+         metavar='<client-id>', help='Imgur Client ID')
+@cli_arg('--client-secret', default=os.environ.get('IMGUR_CLIENT_SECRET'),
+         metavar='<client-secret>', help='Imgur Client Secret')
+@cli_arg('--pin', metavar='<pin>', help='Pin obtained from authorization url')
+def cmd_set_user_auth(client, args):
+    """To initialize CLI to take actions on behalf of a user"""
+    if not args.pin:
+        print("No pin provided, retrieving authorization url...")
+        authorization_url = client.get_auth_url('pin')
+        print(authorization_url)
+        print('Go to authorization url, retrieve the PIN and pass it to the --pin '
+              'argument. For example:\n\timgur set user-auth --pin <pin>')
+    else:
+        credentials = client.authorize(args.pin, 'pin')
+        access_token = credentials['access_token']
+        refresh_token = credentials['refresh_token']
+        os.environ['IMGUR_ACCESS_TOKEN'] = access_token
+        os.environ['IMGUR_REFRESH_TOKEN'] = refresh_token
+        client.set_user_auth(access_token, refresh_token)
+        print('Authorization done!')
