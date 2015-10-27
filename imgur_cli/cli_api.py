@@ -812,6 +812,13 @@ def cmd_set_user_auth(client, args):
 
 
 @cli_subparser('set')
+@cli_arg('client-id', metavar='<client-id>', help='Imgur Client ID')
+def cmd_set_client_id(client, args):
+    """Set Imgur Client ID in the Environment variables"""
+    os.environ['IMGUR_CLIENT_ID'] = args.client_id
+
+
+@cli_subparser('set')
 @cli_arg('mashape-key', metavar='<mashape-key>', help='Mashape Key')
 def cmd_set_mashape_key(client, args):
     """Set Mashape Key in the Environment variables"""
