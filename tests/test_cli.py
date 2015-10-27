@@ -302,6 +302,93 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.album_remove_images.called)
 
+    def test_comment_id(self):
+        argv = ['comment', 'id', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_comment.called)
+
+    def test_comment_delete(self):
+        argv = ['comment', 'delete', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.delete_comment.called)
+
+    @mock.patch('imgur_cli.cli_api.format_comment_tree')
+    def test_comment_replies(self, mock_format_comment_tree):
+        argv = ['comment', 'replies', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_comment_replies.called)
+
+    def test_comment_reply(self):
+        argv = ['comment', 'reply', '123', '456', 'Test comment']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.post_comment_reply.called)
+
+    def test_comment_vote(self):
+        argv = ['comment', 'vote', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.comment_vote.called)
+
+    def test_comment_report(self):
+        argv = ['comment', 'report', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.comment_report.called)
+
+    def test_conversation_list(self):
+        argv = ['conversation', 'list']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.conversation_list.called)
+
+    def test_conversation_id(self):
+        argv = ['conversation', 'id', '123']
+        self._client.return_value.get_conversation.return_value = \
+            mock.Mock(messages=[])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_conversation.called)
+
+    def test_conversation_create(self):
+        argv = ['conversation', 'create', 'ue90', 'Test message']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.create_message.called)
+
+    def test_conversation_delete(self):
+        argv = ['conversation', 'delete', '123']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.delete_conversation.called)
+
+    def test_conversation_report(self):
+        argv = ['conversation', 'report', 'ue90']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.report_sender.called)
+
+    def test_conversation_block(self):
+        argv = ['conversation', 'block', 'ue90']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.block_sender.called)
+
     def test_gallery(self):
         argv = ['gallery', 'items']
         _cli = self.cli(argv)
@@ -449,7 +536,7 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_image.called)
 
-    def test_upload_image(self):
+    def test_image_upload(self):
         argv = ['image', 'upload', 'file', 'test.jpg']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
@@ -461,7 +548,7 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.upload_from_url.called)
 
-    def test_delete_image(self):
+    def test_image_delete(self):
         argv = ['image', 'delete', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
@@ -475,49 +562,12 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.favorite_image.called)
 
-    def test_conversation_list(self):
-        argv = ['conversation', 'list']
+    def test_memegen_default_memes(self):
+        argv = ['memegen', 'default-memes']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.conversation_list.called)
-
-    def test_conversation_id(self):
-        argv = ['conversation', 'id', '123']
-        self._client.return_value.get_conversation.return_value = \
-            mock.Mock(messages=[])
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.get_conversation.called)
-
-    def test_conversation_create(self):
-        argv = ['conversation', 'create', 'ue90', 'Test message']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.create_message.called)
-
-    def test_conversation_delete(self):
-        argv = ['conversation', 'delete', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.delete_conversation.called)
-
-    def test_conversation_report(self):
-        argv = ['conversation', 'report', 'ue90']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.report_sender.called)
-
-    def test_conversation_block(self):
-        argv = ['conversation', 'block', 'ue90']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.block_sender.called)
+        self.assertTrue(_cli.client.default_memes.called)
 
     def test_notification_all(self):
         argv = ['notification', 'all']
@@ -542,52 +592,14 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.mark_notifications_as_read.called)
 
-    def test_comment_id(self):
-        argv = ['comment', 'id', '123']
+    def test_set_user_auth(self):
+        argv = ['set', 'user-auth']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.get_comment.called)
-
-    def test_comment_delete(self):
-        argv = ['comment', 'delete', '123']
+        self.assertTrue(_cli.client.get_auth_url.called)
+        argv.extend(['--pin', 'xyz'])
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.delete_comment.called)
-
-    @mock.patch('imgur_cli.cli_api.format_comment_tree')
-    def test_comment_replies(self, mock_format_comment_tree):
-        argv = ['comment', 'replies', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.get_comment_replies.called)
-
-    def test_comment_reply(self):
-        argv = ['comment', 'reply', '123', '456', 'Test comment']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.post_comment_reply.called)
-
-    def test_comment_vote(self):
-        argv = ['comment', 'vote', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.comment_vote.called)
-
-    def test_comment_report(self):
-        argv = ['comment', 'report', '123']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.comment_report.called)
-
-    def test_memegen_default_memes(self):
-        argv = ['memegen', 'default-memes']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-        self.assertTrue(_cli.client.default_memes.called)
+        self.assertTrue(_cli.client.authorize.called)
+        self.assertTrue(_cli.client.set_user_auth.called)
