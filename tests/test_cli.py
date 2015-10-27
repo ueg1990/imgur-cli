@@ -610,6 +610,12 @@ class TestImgurCli(testtools.TestCase):
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
 
+    def test_set_client_secret(self):
+        argv = ['set', 'client-secret', 'xyz']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+
     def test_set_mashape_key(self):
         argv = ['set', 'mashape-key', 'xyz']
         _cli = self.cli(argv)
