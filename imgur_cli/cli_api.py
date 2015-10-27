@@ -819,6 +819,13 @@ def cmd_set_client_id(client, args):
 
 
 @cli_subparser('set')
+@cli_arg('client-secret', metavar='<client-secret>', help='Imgur Client Secret')
+def cmd_set_client_secret(client, args):
+    """Set Imgur Client Secret in the Environment variables"""
+    os.environ['IMGUR_CLIENT_SECRET'] = args.client_secret
+
+
+@cli_subparser('set')
 @cli_arg('mashape-key', metavar='<mashape-key>', help='Mashape Key')
 def cmd_set_mashape_key(client, args):
     """Set Mashape Key in the Environment variables"""
