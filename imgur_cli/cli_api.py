@@ -11,9 +11,9 @@ from imgur_cli.utils import generate_output
 SUBPARSERS = {'gallery': 'Gallery subparser', 'album': 'Album subparser',
               'image': 'Image subparser', 'comment': 'Comment subparser',
               'memegen': 'Memegen subparser', 'account': 'Account subparser',
-              'custom-gallery': 'Custom Gallery subparser',
               'conversation': 'Conversation subparser',
-              'notification': 'Notification subparser'}
+              'notification': 'Notification subparser',
+              'set': 'Setting Environment subparser'}
 
 
 @cli_subparser('account')
@@ -370,6 +370,128 @@ def cmd_album_remove_images(client, args):
     generate_output({'remove_images': remove_images})
 
 
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+def cmd_comment_id(client, args):
+    """Get information about a specific comment"""
+    comment = client.get_comment(args.comment_id)
+    data = comment.__dict__
+    generate_output({'comment': data})
+
+
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+def cmd_comment_delete(client, args):
+    """Delete a comment by the given id"""
+    delete_comment = client.delete_comment(args.comment_id)
+    generate_output({'delete_comment': delete_comment})
+
+
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_comment_replies(client, args):
+    """Get the comment with all of the replies for the comment"""
+    comment_replies = client.get_comment_replies(args.comment_id)
+    data = format_comment_tree(comment_replies)
+    generate_output({'comment_replies': data}, args.output_file)
+
+
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+@cli_arg('image_id', help='Image ID')
+@cli_arg('comment', help='The comment text, this is what will be displayed')
+def cmd_comment_reply(client, args):
+    """Create a reply for the given comment"""
+    comment_reply = client.post_comment_reply(args.comment_id, args.image_id,
+                                              args.comment)
+    generate_output({'comment_reply': comment_reply})
+
+
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+@cli_arg('--vote', default='up', metavar='<vote>', choices=['up', 'down'],
+         help="'up' or 'down'")
+def cmd_comment_vote(client, args):
+    """Vote on a comment. The {vote} variable can only be set as "up" or "down"""
+    comment_vote = client.comment_vote(args.comment_id, args.vote)
+    generate_output({'comment_vote': comment_vote})
+
+
+@cli_subparser('comment')
+@cli_arg('comment_id', type=int, help='Comment ID')
+def cmd_comment_report(client, args):
+    """Report a comment for being inappropriate"""
+    comment_report = client.comment_report(args.comment_id)
+    generate_output({'comment_report': comment_report})
+
+
+@cli_subparser('conversation')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_conversation_list(client, args):
+    """Get list of all conversations for the logged in user"""
+    conversation_list = client.conversation_list()
+    data = [item.__dict__ for item in conversation_list]
+    generate_output({'conversation_list': data}, args.output_file)
+
+
+@cli_subparser('conversation')
+@cli_arg('conversation_id', type=int, help='Conversation ID')
+@cli_arg('--page', default=1, metavar='<page>', type=int,
+         help='Page of message thread. Starting at 1 for the most recent 25 '
+         'messages and counting upwards (defaults to %(default)s)')
+@cli_arg('--offset', default=0, metavar='<offset>', type=int,
+         help='Additional offset in current page (defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_conversation_id(client, args):
+    """Get information about a specific conversation. Includes messages"""
+    conversation = client.get_conversation(args.conversation_id,
+                                           args.page, args.offset)
+    data = conversation.__dict__
+    try:
+        data['messages'] = [item.__dict__ for item in data['messages']]
+    except TypeError:
+        pass
+    generate_output({'conversation': data})
+
+
+@cli_subparser('conversation')
+@cli_arg('recipient', help='The recipient username, this person will receive '
+         'the message')
+@cli_arg('body', help='The message body')
+def cmd_conversation_create(client, args):
+    """Create a new message"""
+    create_message = client.create_message(args.recipient, args.body)
+    generate_output({'create_message': create_message})
+
+
+@cli_subparser('conversation')
+@cli_arg('conversation_id', type=int, help='Conversation ID')
+def cmd_conversation_delete(client, args):
+    """Delete a conversation by the given ID"""
+    delete_conversation = client.delete_conversation(args.conversation_id)
+    generate_output({'delete_conversation': delete_conversation})
+
+
+@cli_subparser('conversation')
+@cli_arg('username', help='Username of sender to report')
+def cmd_conversation_report(client, args):
+    """Report a user for sending messages that are against the Terms of Service"""
+    report_sender = client.report_sender(args.username)
+    generate_output({'report_sender': report_sender})
+
+
+@cli_subparser('conversation')
+@cli_arg('username', help='Username of sender to block')
+def cmd_conversation_block(client, args):
+    """Block the user from sending messages to the user that is logged in"""
+    block_sender = client.block_sender(args.username)
+    generate_output({'block_sender': block_sender})
+
+
 @cli_subparser('gallery')
 @cli_arg('--section', default='hot', metavar='<section>',
          choices=['hot', 'top', 'user'],
@@ -607,69 +729,14 @@ def cmd_image_favorite(client, args):
     generate_output({'favorite_image': favorite_image})
 
 
-@cli_subparser('conversation')
+@cli_subparser('memegen')
 @cli_arg('--output-file', default=None, metavar='<output_file>',
          help='Save output to a JSON file')
-def cmd_conversation_list(client, args):
-    """Get list of all conversations for the logged in user"""
-    conversation_list = client.conversation_list()
-    data = [item.__dict__ for item in conversation_list]
-    generate_output({'conversation_list': data}, args.output_file)
-
-
-@cli_subparser('conversation')
-@cli_arg('conversation_id', type=int, help='Conversation ID')
-@cli_arg('--page', default=1, metavar='<page>', type=int,
-         help='Page of message thread. Starting at 1 for the most recent 25 '
-         'messages and counting upwards (defaults to %(default)s)')
-@cli_arg('--offset', default=0, metavar='<offset>', type=int,
-         help='Additional offset in current page (defaults to %(default)s)')
-@cli_arg('--output-file', default=None, metavar='<output_file>',
-         help='Save output to a JSON file')
-def cmd_conversation_id(client, args):
-    """Get information about a specific conversation. Includes messages"""
-    conversation = client.get_conversation(args.conversation_id,
-                                           args.page, args.offset)
-    data = conversation.__dict__
-    try:
-        data['messages'] = [item.__dict__ for item in data['messages']]
-    except TypeError:
-        pass
-    generate_output({'conversation': data})
-
-
-@cli_subparser('conversation')
-@cli_arg('recipient', help='The recipient username, this person will receive '
-         'the message')
-@cli_arg('body', help='The message body')
-def cmd_conversation_create(client, args):
-    """Create a new message"""
-    create_message = client.create_message(args.recipient, args.body)
-    generate_output({'create_message': create_message})
-
-
-@cli_subparser('conversation')
-@cli_arg('conversation_id', type=int, help='Conversation ID')
-def cmd_conversation_delete(client, args):
-    """Delete a conversation by the given ID"""
-    delete_conversation = client.delete_conversation(args.conversation_id)
-    generate_output({'delete_conversation': delete_conversation})
-
-
-@cli_subparser('conversation')
-@cli_arg('username', help='Username of sender to report')
-def cmd_conversation_report(client, args):
-    """Report a user for sending messages that are against the Terms of Service"""
-    report_sender = client.report_sender(args.username)
-    generate_output({'report_sender': report_sender})
-
-
-@cli_subparser('conversation')
-@cli_arg('username', help='Username of sender to block')
-def cmd_conversation_block(client, args):
-    """Block the user from sending messages to the user that is logged in"""
-    block_sender = client.block_sender(args.username)
-    generate_output({'block_sender': block_sender})
+def cmd_memegen_default_memes(client, args):
+    """Get the list of default memes"""
+    default_memes = client.default_memes()
+    data = [item.__dict__ for item in default_memes]
+    generate_output({'default_memes': args.output_file})
 
 
 @cli_subparser('notification')
@@ -716,70 +783,3 @@ def cmd_notification_mark(client, args):
     notifications_marked_as_viewed = client.mark_notifications_as_read(args.ids)
     generate_output({'notifications_marked_as_viewed':
                      notifications_marked_as_viewed})
-
-
-@cli_subparser('comment')
-@cli_arg('comment_id', type=int, help='Comment ID')
-def cmd_comment_id(client, args):
-    """Get information about a specific comment"""
-    comment = client.get_comment(args.comment_id)
-    data = comment.__dict__
-    generate_output({'comment': data})
-
-
-@cli_subparser('comment')
-@cli_arg('comment_id', type=int, help='Comment ID')
-def cmd_comment_delete(client, args):
-    """Delete a comment by the given id"""
-    delete_comment = client.delete_comment(args.comment_id)
-    generate_output({'delete_comment': delete_comment})
-
-
-@cli_subparser('comment')
-@cli_arg('comment_id', type=int, help='Comment ID')
-@cli_arg('--output-file', default=None, metavar='<output_file>',
-         help='Save output to a JSON file')
-def cmd_comment_replies(client, args):
-    """Get the comment with all of the replies for the comment"""
-    comment_replies = client.get_comment_replies(args.comment_id)
-    data = format_comment_tree(comment_replies)
-    generate_output({'comment_replies': data}, args.output_file)
-
-
-@cli_subparser('comment')
-@cli_arg('comment_id', type=int, help='Comment ID')
-@cli_arg('image_id', help='Image ID')
-@cli_arg('comment', help='The comment text, this is what will be displayed')
-def cmd_comment_reply(client, args):
-    """Create a reply for the given comment"""
-    comment_reply = client.post_comment_reply(args.comment_id, args.image_id,
-                                              args.comment)
-    generate_output({'comment_reply': comment_reply})
-
-
-@cli_subparser('comment')
-@cli_arg('comment_id', type=int, help='Comment ID')
-@cli_arg('--vote', default='up', metavar='<vote>', choices=['up', 'down'],
-         help="'up' or 'down'")
-def cmd_comment_vote(client, args):
-    """Vote on a comment. The {vote} variable can only be set as "up" or "down"""
-    comment_vote = client.comment_vote(args.comment_id, args.vote)
-    generate_output({'comment_vote': comment_vote})
-
-
-@cli_subparser('comment')
-@cli_arg('comment_id', type=int, help='Comment ID')
-def cmd_comment_report(client, args):
-    """Report a comment for being inappropriate"""
-    comment_report = client.comment_report(args.comment_id)
-    generate_output({'comment_report': comment_report})
-
-
-@cli_subparser('memegen')
-@cli_arg('--output-file', default=None, metavar='<output_file>',
-         help='Save output to a JSON file')
-def cmd_memegen_default_memes(client, args):
-    """Get the list of default memes"""
-    default_memes = client.default_memes()
-    data = [item.__dict__ for item in default_memes]
-    generate_output({'default_memes': args.output_file})
