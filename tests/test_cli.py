@@ -578,8 +578,11 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.default_memes.called)
 
-    def test_notification_all(self):
+    @mock.patch('imgur_cli.cli_api.format_comment_tree')
+    def test_notification_all(self, mock_format_comment_tree):
         argv = ['notification', 'all']
+        self._client.return_value.get_notifications.return_value = \
+            {'messages': [mock.Mock()], 'replies': [mock.Mock(content=[])]}
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
