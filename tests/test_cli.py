@@ -585,10 +585,20 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_notifications.called)
 
-    def test_notification_id(self):
+    def test_notification_id_1(self):
         argv = ['notification', 'id', '123']
         self._client.return_value.get_notification.return_value = \
             mock.Mock(content=[])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_notification.called)
+
+    @mock.patch('imgur_cli.cli_api.format_comment_tree')
+    def test_notification_id_2(self, mock_format_comment_tree):
+        argv = ['notification', 'id', '123']
+        self._client.return_value.get_notification.return_value = \
+            mock.Mock(content={'comment': []})
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
