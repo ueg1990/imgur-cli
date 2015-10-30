@@ -129,7 +129,7 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_account_submissions.called)
 
-    def test_account_submissions(self):
+    def test_account_settings(self):
         argv = ['account', 'settings', 'me']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
@@ -352,7 +352,7 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.conversation_list.called)
 
-    def test_conversation_id(self):
+    def test_conversation_id_1(self):
         argv = ['conversation', 'id', '123']
         self._client.return_value.get_conversation.return_value = \
             mock.Mock(messages=[])
@@ -361,6 +361,15 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_conversation.called)
 
+    def test_conversation_id_2(self):
+        argv = ['conversation', 'id', '123']
+        self._client.return_value.get_conversation.return_value = \
+            mock.Mock(items=[])
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.get_conversation.called)
+        
     def test_conversation_create(self):
         argv = ['conversation', 'create', 'ue90', 'Test message']
         _cli = self.cli(argv)

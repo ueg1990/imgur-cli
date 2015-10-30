@@ -455,7 +455,7 @@ def cmd_conversation_id(client, args):
     data = conversation.__dict__
     try:
         data['messages'] = [item.__dict__ for item in data['messages']]
-    except TypeError:
+    except KeyError:
         pass
     generate_output({'conversation': data})
 
