@@ -369,7 +369,7 @@ class TestImgurCli(testtools.TestCase):
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_conversation.called)
-        
+
     def test_conversation_create(self):
         argv = ['conversation', 'create', 'ue90', 'Test message']
         _cli = self.cli(argv)

@@ -521,6 +521,25 @@ def cmd_gallery_items(client, args):
 
 
 @cli_subparser('gallery')
+@cli_arg('--sort', default='viral', metavar='<sort>',
+         choices=['viral', 'top', 'time'],
+         help='viral | top | time - defaults to %(default)s')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='The data paging number (defaults to %(default)s)')
+@cli_arg('--window', default='week', metavar='<window>',
+         choices=['day', 'week', 'month', 'year', 'all'],
+         help='Change the date range of the request if the sort is "top", '
+         'day | week | month | year | all (Defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_gallery_memes_subgallery(client, args):
+    """View images for memes subgallery"""
+    memes_subgallery = client.memes_subgallery(args.sort, args.page, args.window)
+    data = [item.__dict__ for item in memes_subgallery]
+    generate_output({'memes_subgallery': data}, args.output_file)
+
+
+@cli_subparser('gallery')
 @cli_arg('tag', help='The name of the tag')
 @cli_arg('--sort', default='viral', metavar='<sort>',
          choices=['viral', 'top', 'time'],
