@@ -415,6 +415,17 @@ class TestImgurCli(testtools.TestCase):
         self.assertTrue(all(getattr(parser_args, key) == value
                             for key, value in expected_args.items()))
 
+    def test_gallery_memes_subgallery(self):
+        argv = ['gallery', 'memes-subgallery']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.memes_subgallery.called)
+        expected_args = {'sort': 'viral', 'page': 0, 'window': 'week',
+                         'output_file': None}
+        self.assertTrue(all(getattr(parser_args, key) == value
+                            for key, value in expected_args.items()))
+
     def test_gallery_tag(self):
         argv = ['gallery', 'tag', 'dogs']
         self._client.return_value.gallery_tag.return_value = mock.Mock(items=[])
