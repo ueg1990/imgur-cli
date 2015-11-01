@@ -540,6 +540,27 @@ def cmd_gallery_memes_subgallery(client, args):
 
 
 @cli_subparser('gallery')
+@cli_arg('subreddit', help='A valid subreddit name')
+@cli_arg('--sort', default='time', metavar='<sort>',
+         choices=['top', 'time'],
+         help='top | time - defaults to %(default)s')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='The data paging number (defaults to %(default)s)')
+@cli_arg('--window', default='week', metavar='<window>',
+         choices=['day', 'week', 'month', 'year', 'all'],
+         help='Change the date range of the request if the sort is "top", '
+         'day | week | month | year | all (Defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_gallery_subreddit_gallery(client, args):
+    """View gallery images for a subreddit"""
+    subreddit_gallery = client.subreddit_gallery(args.subreddit, args.sort,
+                                                 args.window, args.page)
+    data = [item.__dict__ for item in subreddit_gallery]
+    generate_output({'subreddit_gallery': data}, args.output_file)
+
+
+@cli_subparser('gallery')
 @cli_arg('tag', help='The name of the tag')
 @cli_arg('--sort', default='viral', metavar='<sort>',
          choices=['viral', 'top', 'time'],
@@ -831,21 +852,21 @@ def cmd_set_user_auth(client, args):
 
 
 @cli_subparser('set')
-@cli_arg('client-id', metavar='<client-id>', help='Imgur Client ID')
+@cli_arg('client_id', metavar='<client-id>', help='Imgur Client ID')
 def cmd_set_client_id(client, args):
     """Set Imgur Client ID in the Environment variables"""
     os.environ['IMGUR_CLIENT_ID'] = args.client_id
 
 
 @cli_subparser('set')
-@cli_arg('client-secret', metavar='<client-secret>', help='Imgur Client Secret')
+@cli_arg('client_secret', metavar='<client-secret>', help='Imgur Client Secret')
 def cmd_set_client_secret(client, args):
     """Set Imgur Client Secret in the Environment variables"""
     os.environ['IMGUR_CLIENT_SECRET'] = args.client_secret
 
 
 @cli_subparser('set')
-@cli_arg('mashape-key', metavar='<mashape-key>', help='Mashape Key')
+@cli_arg('mashape_key', metavar='<mashape-key>', help='Mashape Key')
 def cmd_set_mashape_key(client, args):
     """Set Mashape Key in the Environment variables"""
     os.environ['IMGUR_MASHAPE_KEY'] = args.mashape_key
