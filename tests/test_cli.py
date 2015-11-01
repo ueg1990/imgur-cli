@@ -426,6 +426,17 @@ class TestImgurCli(testtools.TestCase):
         self.assertTrue(all(getattr(parser_args, key) == value
                             for key, value in expected_args.items()))
 
+    def test_gallery_subreddit_gallery(self):
+        argv = ['gallery', 'subreddit-gallery', 'soccer']
+        _cli = self.cli(argv)
+        parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
+        self.assertTrue(_cli.client.subreddit_gallery.called)
+        expected_args = {'sort': 'time', 'page': 0, 'window': 'week',
+                         'output_file': None}
+        self.assertTrue(all(getattr(parser_args, key) == value
+                            for key, value in expected_args.items()))
+
     def test_gallery_tag(self):
         argv = ['gallery', 'tag', 'dogs']
         self._client.return_value.gallery_tag.return_value = mock.Mock(items=[])
