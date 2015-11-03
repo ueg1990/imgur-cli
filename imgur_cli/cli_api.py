@@ -561,6 +561,16 @@ def cmd_gallery_subreddit_gallery(client, args):
 
 
 @cli_subparser('gallery')
+@cli_arg('subreddit', help='A valid subreddit name')
+@cli_arg('image_id', help='Image ID')
+def cmd_gallery_subreddit_image(client, args):
+    """View a single image in the subreddit"""
+    subreddit_image = client.subreddit_image(args.subreddit, args.image_id)
+    data = subreddit_image.__dict__
+    generate_output({'subreddit_image': data})
+
+
+@cli_subparser('gallery')
 @cli_arg('tag', help='The name of the tag')
 @cli_arg('--sort', default='viral', metavar='<sort>',
          choices=['viral', 'top', 'time'],
