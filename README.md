@@ -2,12 +2,13 @@
 
 A command line interface for Imgur
 
+#### Note: 
+Need Python 3. I decided to stick with only Python 3 in order to encourage other developers to use Python 3. You can (and should) use a virtual environment to ensure there are no dependency issues with other tools and libraries.
+
 ## Installation
 
     pip install imgurpython
 
-
-#### Note: Need Python 3
 
 ## Imgur API Documentation
 
