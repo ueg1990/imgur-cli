@@ -41,6 +41,9 @@ To take actions as a logged in user, you will additionally need an access token 
     export IMGUR_ACCESS_TOKEN=<IMGUR_ACCESS_TOKEN>
     export IMGUR_REFRESH_TOKEN=<IMGUR_REFRESH_TOKEN>
 
+#### Note: 
+To set environment variables on a Windows system, you can follow instructions [here](https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables)
+
 ## Library Usage
 
 ### Help
