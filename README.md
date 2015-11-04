@@ -7,6 +7,8 @@ A command line interface for Imgur
     pip install imgurpython
 
 
+#### Note: Need Python 3
+
 ## Imgur API Documentation
 
 
