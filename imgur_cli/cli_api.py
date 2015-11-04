@@ -15,7 +15,7 @@ SUBPARSERS = {'gallery': 'Gallery subparser', 'album': 'Album subparser',
               'memegen': 'Memegen subparser', 'account': 'Account subparser',
               'conversation': 'Conversation subparser',
               'notification': 'Notification subparser',
-              'set': 'Setting Environment subparser'}
+              'auth': 'Authentication subparser'}
 
 
 @cli_subparser('account')
@@ -837,46 +837,23 @@ def cmd_notification_mark(client, args):
                      notifications_marked_as_viewed})
 
 
-@cli_subparser('set')
-@cli_arg('--client-id', default=os.environ.get('IMGUR_CLIENT_ID'),
-         metavar='<client-id>', help='Imgur Client ID')
-@cli_arg('--client-secret', default=os.environ.get('IMGUR_CLIENT_SECRET'),
-         metavar='<client-secret>', help='Imgur Client Secret')
-@cli_arg('--pin', metavar='<pin>', help='Pin obtained from authorization url')
-def cmd_set_user_auth(client, args):
+@cli_subparser('auth')
+def cmd_auth_url(client, args):
+    """Retrieve authorization_url"""
+    authorization_url = client.get_auth_url('pin')
+    print("Retrieving authorization url...")
+    print(authorization_url)
+    print('Go to authorization url, retrieve the PIN and pass it to the subcommand  '
+          'set-user-auth. For example:\n\timgur auth set-user-auth <pin>')
+
+
+@cli_subparser('auth')
+@cli_arg('pin', help='Pin obtained from authorization url')
+def cmd_auth_set_user_auth(client, args):
     """To initialize CLI to take actions on behalf of a user"""
-    if not args.pin:
-        print("No pin provided, retrieving authorization url...")
-        authorization_url = client.get_auth_url('pin')
-        print(authorization_url)
-        print('Go to authorization url, retrieve the PIN and pass it to the --pin '
-              'argument. For example:\n\timgur set user-auth --pin <pin>')
-    else:
-        credentials = client.authorize(args.pin, 'pin')
-        access_token = credentials['access_token']
-        refresh_token = credentials['refresh_token']
-        os.environ['IMGUR_ACCESS_TOKEN'] = access_token
-        os.environ['IMGUR_REFRESH_TOKEN'] = refresh_token
-        client.set_user_auth(access_token, refresh_token)
-        print('Authorization done!')
-
-
-@cli_subparser('set')
-@cli_arg('client_id', metavar='<client-id>', help='Imgur Client ID')
-def cmd_set_client_id(client, args):
-    """Set Imgur Client ID in the Environment variables"""
-    os.environ['IMGUR_CLIENT_ID'] = args.client_id
-
-
-@cli_subparser('set')
-@cli_arg('client_secret', metavar='<client-secret>', help='Imgur Client Secret')
-def cmd_set_client_secret(client, args):
-    """Set Imgur Client Secret in the Environment variables"""
-    os.environ['IMGUR_CLIENT_SECRET'] = args.client_secret
-
-
-@cli_subparser('set')
-@cli_arg('mashape_key', metavar='<mashape-key>', help='Mashape Key')
-def cmd_set_mashape_key(client, args):
-    """Set Mashape Key in the Environment variables"""
-    os.environ['IMGUR_MASHAPE_KEY'] = args.mashape_key
+    credentials = client.authorize(args.pin, 'pin')
+    access_token = credentials['access_token']
+    refresh_token = credentials['refresh_token']
+    client.set_user_auth(access_token, refresh_token)
+    print('Authorization done!\n\tAccess Token: {0}\n\tRefresh Token: {1}'
+          .format(access_token, refresh_token))
