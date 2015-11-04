@@ -2,18 +2,6 @@
 
 A command line interface for Imgur
 
-## Requirements
-- Python 3
-- imgurpython (>= 1.1.6)
-- pip - instructions [here](https://pip.pypa.io/en/latest/installing.html)
-- virtualenvwrapper - instructions [here](https://virtualenvwrapper.readthedocs.org/en/latest/install.html) (can also use [virtualenv](https://virtualenv.readthedocs.org/en/latest/installation.html))
-
-For tests, additional requirements:
-
-- testtools
-- nose
-- coverage
-
 ## Installation
 
     pip install imgurpython
@@ -179,6 +167,35 @@ For help of each subcommandm you can run:
 Some commands allow to store output in a file (you run the -h option with each command to check). 
 
     imgur gallery items --output-file <path_to_file>
+
+## Development
+It is suggested to do development in a virtual environment using virtualenvwrapper/virtualenv 
+
+### Requirements
+- Python 3
+- imgurpython (>= 1.1.6)
+- pip - instructions [here](https://pip.pypa.io/en/latest/installing.html)
+- virtualenvwrapper - instructions [here](https://virtualenvwrapper.readthedocs.org/en/latest/install.html) (can also use [virtualenv](https://virtualenv.readthedocs.org/en/latest/installation.html))
+
+For tests, additional requirements:
+
+- testtools
+- nose
+- coverage
+
+### Fork and Clone
+1. Fork the repo
+2. Clone the fork repo:
+
+    ```
+    git clone https://github.com/ueg1990/imgur-cli.git
+    ```
+3. Run setup.py:
+
+    ```
+    python setup.py develop
+    ````
+4. Start developing and contributing! :)
 
 ## Author
 
