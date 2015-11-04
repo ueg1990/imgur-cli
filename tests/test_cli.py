@@ -643,32 +643,16 @@ class TestImgurCli(testtools.TestCase):
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.mark_notifications_as_read.called)
 
-    def test_set_user_auth(self):
-        argv = ['set', 'user-auth']
+    def test_auth_url(self):
+        argv = ['auth', 'url']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
         self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.get_auth_url.called)
-        argv.extend(['--pin', 'xyz'])
+
+    def test_auth_set_user_auth(self):
+        argv = ['auth', 'set-user-auth', '123']
         _cli = self.cli(argv)
         parser_args = _cli.parser.parse_args(argv)
+        self.assertParser(_cli, parser_args, argv)
         self.assertTrue(_cli.client.authorize.called)
-        self.assertTrue(_cli.client.set_user_auth.called)
-
-    def test_set_client_id(self):
-        argv = ['set', 'client-id', 'xyz']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-
-    def test_set_client_secret(self):
-        argv = ['set', 'client-secret', 'xyz']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
-
-    def test_set_mashape_key(self):
-        argv = ['set', 'mashape-key', 'xyz']
-        _cli = self.cli(argv)
-        parser_args = _cli.parser.parse_args(argv)
-        self.assertParser(_cli, parser_args, argv)
