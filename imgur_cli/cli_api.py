@@ -623,6 +623,36 @@ def cmd_gallery_tag_vote(client, args):
 
 
 @cli_subparser('gallery')
+@cli_arg('q', help="Query string (note: if advanced search parameters are set,"
+         "this query string is ignored). This parameter also supports boolean "
+         "operators (AND, OR, NOT) and indices (tag: user: title: ext: subreddit: "
+         "album: meme:). An example compound query would be 'title: cats AND dogs "
+         "ext: gif'")
+@cli_arg('--advanced', default=None, help='Advanced Search Query Parameters')
+@cli_arg('--sort', default='time', metavar='<sort>',
+         choices=['viral', 'top', 'time'],
+         help='viral | top | time - defaults to %(default)s')
+@cli_arg('--page', default=0, metavar='<page>', type=int,
+         help='The data paging number (defaults to %(default)s)')
+@cli_arg('--window', default='all', metavar='<window>',
+         choices=['day', 'week', 'month', 'year', 'all'],
+         help='Change the date range of the request if the sort is "top", '
+         'day | week | month | year | all (Defaults to %(default)s)')
+@cli_arg('--output-file', default=None, metavar='<output_file>',
+         help='Save output to a JSON file')
+def cmd_gallery_search(client, args):
+    """Search the gallery with a given query string"""
+    if args.advanced:
+        config = data_fields(args.advanced, client.allowed_advanced_search_fields)
+    else:
+        config = None
+    gallery_search = client.gallery_search(args.q, config, args.sort,
+                                           args.window, args.page)
+    data = [item.__dict__ for item in gallery_search]
+    generate_output({'gallery_search': data}, args.output_file)
+
+
+@cli_subparser('gallery')
 @cli_arg('--page', default=0, metavar='<page>', type=int,
          help='A page of random gallery images, from 0-50. '
          'Pages are regenerated every hour (defaults to %(default)s)')
